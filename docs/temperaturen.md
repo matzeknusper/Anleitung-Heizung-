@@ -6,23 +6,23 @@ Es gibt keinen Raumfühler. Die Knöpfe verschieben die Heizkennlinie, der Effek
 sich **verzögert** ein (je nach Haus mehrere Stunden bis einen Tag). Immer nur in kleinen
 Schritten verstellen und abwarten.
 
-### Tagsüber (Normalbetrieb)
+### Tagsüber (Normalbetrieb ☀︎)
 
 - Stellung `N` entspricht etwa **20 °C** Raumtemperatur bei richtig eingestellter
   Heizkennlinie.
 - Jeder Teilstrich ≈ **1 °C**. Richtung `+` wärmer, Richtung `−` kälter.
 - Wenn die Räume **immer** zu kalt oder zu warm sind, egal wie das Wetter ist, ist
-  der <img class="sym" src="../bilder/symbole/sonne.png" alt="Sonne" title="Normalbetrieb (Tag)" height="20">-Knopf der richtige Hebel. Wenn es nur bei bestimmtem Wetter nicht passt,
+  der ☀︎-Knopf der richtige Hebel. Wenn es nur bei bestimmtem Wetter nicht passt,
   siehe Heizkennlinie ([Heizkennlinie (Neigung und Niveau)](temperaturen.md#heizkennlinie-neigung-und-niveau)).
 
-### Nachts / Absenkung (reduzierter Betrieb)
+### Nachts / Absenkung (reduzierter Betrieb ☽)
 
 - Stellung `N` entspricht etwa **14 °C**.
 - Jeder Teilstrich ≈ **1 °C**.
-- Wirkt nur, wenn die „blaue“ Betriebsart <img class="sym" src="../bilder/symbole/mond.png" alt="Mond" title="Reduzierter Betrieb (Nacht)" height="20"> ist, also bei Programm <img class="sym col" src="../bilder/symbole/sonne_rot.png" alt="Sonne" title="Normalbetrieb (Tag) – „rot“, in den Heizzeiten" height="20">/<img class="sym col" src="../bilder/symbole/mond_blau.png" alt="Mond" title="Reduzierter Betrieb (Nacht) – „blau“, außerhalb der Heizzeiten" height="20"> oder <img class="sym col" src="../bilder/symbole/mond_rot.png" alt="Mond" title="Reduzierter Betrieb (Nacht) – „rot“, in den Heizzeiten" height="20">/<img class="sym col" src="../bilder/symbole/mond_blau.png" alt="Mond" title="Reduzierter Betrieb (Nacht) – „blau“, außerhalb der Heizzeiten" height="20">.
-  Bei <img class="sym col" src="../bilder/symbole/sonne_rot.png" alt="Sonne" title="Normalbetrieb (Tag) – „rot“, in den Heizzeiten" height="20">/<img class="sym col" src="../bilder/symbole/schnee_blau.png" alt="Schneeflocke" title="Abschaltbetrieb mit Frostschutz – „blau“, außerhalb der Heizzeiten" height="20"> ist die Heizung nachts ganz aus, der <img class="sym" src="../bilder/symbole/mond.png" alt="Mond" title="Reduzierter Betrieb (Nacht)" height="20">-Knopf wirkt dann nur beim Frostschutz.
+- Wirkt nur, wenn die „blaue“ Betriebsart ☽ ist, also bei Programm ☀︎/☽ oder ☽/☽.
+  Bei ☀︎/❄︎ ist die Heizung nachts ganz aus, der ☽-Knopf wirkt dann nur beim Frostschutz.
 - Bleibt es nachts trotzdem warm, liegt das meist an der Speichermasse des Hauses,
-  nicht an der Regelung. Dann <img class="sym" src="../bilder/symbole/mond.png" alt="Mond" title="Reduzierter Betrieb (Nacht)" height="20"> niedriger stellen oder die Heizzeit früher enden lassen.
+  nicht an der Regelung. Dann ☽ niedriger stellen oder die Heizzeit früher enden lassen.
 
 ### Thermostatventile
 
@@ -34,7 +34,7 @@ drosseln statt die ganze Anlage kälter zu stellen.
 
 ## Warmwasser
 
-- Drehknopf <img class="sym" src="../bilder/symbole/hahn.png" alt="Wasserhahn" title="Trinkwassererwärmung" height="20">: Bereich **32 – 60 °C**, Normalstellung **50 °C**, ein Teilstrich ≈ 2 °C.
+- Drehknopf <img class="sym" src="../bilder/symbole/hahn.png" alt="Wasserhahn" title="Trinkwassererwärmung (Warmwasser)" height="20">: Bereich **32 – 60 °C**, Normalstellung **50 °C**, ein Teilstrich ≈ 2 °C.
 - Stellung `0` = Warmwasserbereitung aus.
 - Der Speicher wird nur innerhalb der `SU2`-Zeiten nachgeheizt und nur in den
   Betriebsprogrammen mit Warmwasser (siehe Tabelle in [Betriebsprogramm wählen (Programmwahlschalter)](bedienung.md#betriebsprogramm-wahlen-programmwahlschalter)).
@@ -67,7 +67,7 @@ oder ältere Anlage mit Heizkörpern ≈ 1,2. Niedertemperaturheizungen liegen i
 | Im **tiefen Winter** zu warm, in der Übergangszeit in Ordnung         | **Neigung** einen Schritt **niedriger**                               |
 | In der **Übergangszeit** zu kalt, im tiefen Winter in Ordnung         | **Niveau** etwas **höher**, dann **Neigung** einen Schritt niedriger  |
 | In der **Übergangszeit** zu warm, im tiefen Winter in Ordnung         | **Niveau** etwas **niedriger**, dann **Neigung** einen Schritt höher  |
-| **Immer** zu kalt / zu warm, bei jedem Wetter                         | nicht die Kennlinie, sondern den **<img class="sym" src="../bilder/symbole/sonne.png" alt="Sonne" title="Normalbetrieb (Tag)" height="20">-Knopf** verstellen ([Raumtemperatur einstellen](temperaturen.md#raumtemperatur-einstellen)) |
+| **Immer** zu kalt / zu warm, bei jedem Wetter                         | nicht die Kennlinie, sondern den **☀︎-Knopf** verstellen ([Raumtemperatur einstellen](temperaturen.md#raumtemperatur-einstellen)) |
 
 Immer nur einen Schritt ändern und ein bis zwei Tage beobachten.
 

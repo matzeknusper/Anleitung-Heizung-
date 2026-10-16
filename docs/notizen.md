@@ -8,9 +8,9 @@ Hier kannst du deine eigenen Einstellungen festhalten (Seite ausdrucken oder in 
 | Knopf                 | Eingestellt am | Wert |
 |-----------------------|----------------|------|
 | Programmwahlschalter  |                |      |
-| <img class="sym" src="../bilder/symbole/sonne.png" alt="Sonne" title="Normalbetrieb (Tag)" height="20"> Tag                 |                |      |
-| <img class="sym" src="../bilder/symbole/mond.png" alt="Mond" title="Reduzierter Betrieb (Nacht)" height="20"> Nacht               |                |      |
-| <img class="sym" src="../bilder/symbole/hahn.png" alt="Wasserhahn" title="Trinkwassererwärmung" height="20"> Warmwasser         |                |      |
+| ☀︎ Tag                 |                |      |
+| ☽ Nacht               |                |      |
+| <img class="sym" src="../bilder/symbole/hahn.png" alt="Wasserhahn" title="Trinkwassererwärmung (Warmwasser)" height="20"> Warmwasser         |                |      |
 | Neigung               |                |      |
 | Niveau                |                |      |
 

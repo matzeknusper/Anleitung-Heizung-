@@ -89,7 +89,7 @@ Soll wieder **jeder Tag gleich** laufen, hilft nur `CL` und komplettes Neueinste
 ### Warmwasser-Zeiten (`SU2`)
 
 Genauso wie beim Heizkreis, nur mit den Tasten des Kanals `SU2`. Innerhalb der
-Zeiträume wird der Speicher auf die Temperatur am <img class="sym" src="../bilder/symbole/hahn.png" alt="Wasserhahn" title="Trinkwassererwärmung" height="20">-Knopf nachgeheizt, außerhalb nicht.
+Zeiträume wird der Speicher auf die Temperatur am <img class="sym" src="../bilder/symbole/hahn.png" alt="Wasserhahn" title="Trinkwassererwärmung (Warmwasser)" height="20">-Knopf nachgeheizt, außerhalb nicht.
 Beispiel sparsam: 5:30 – 8:00 und 17:00 – 21:00. Wer jederzeit Warmwasser will, lässt
 die Werkseinstellung 6:00 – 22:00 oder stellt 0:00 – 24:00.
 
