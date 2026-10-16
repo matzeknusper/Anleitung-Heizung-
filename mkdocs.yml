@@ -1,0 +1,74 @@
+site_name: Ölheizung – Kurzanleitung
+site_description: Vereinfachte Bedienungsanleitung für Viessmann Trimatik am Vitola-biferral-RN
+site_url: https://matzeknusper.github.io/Anleitung-Heizung-/
+repo_url: https://github.com/matzeknusper/Anleitung-Heizung-
+repo_name: Anleitung-Heizung-
+edit_uri: edit/main/docs/
+docs_dir: docs
+
+theme:
+  name: material
+  language: de
+  icon:
+    logo: material/fire
+    repo: fontawesome/brands/github
+  favicon: assets/favicon.svg
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep orange
+      accent: orange
+      toggle:
+        icon: material/weather-night
+        name: Dunkles Design
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep orange
+      accent: orange
+      toggle:
+        icon: material/weather-sunny
+        name: Helles Design
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - navigation.footer
+    - navigation.instant
+    - toc.follow
+    - search.suggest
+    - search.highlight
+    - content.action.edit
+    - content.code.copy
+
+nav:
+  - Start: index.md
+  - Bedienung: bedienung.md
+  - Uhr & Heizzeiten: heizzeiten.md
+  - Temperaturen: temperaturen.md
+  - Urlaub, Störungen, Sparen: betrieb.md
+  - Notizen: notizen.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+plugins:
+  - search:
+      lang: de
+
+extra_css:
+  - stylesheets/extra.css

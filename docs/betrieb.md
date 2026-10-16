@@ -1,0 +1,62 @@
+# Urlaub, Störungen, Sparen
+
+## Urlaub, Sommer, Abschalten
+
+**Sommer:** Programmwahlschalter auf **🚰/❄**. Kessel läuft nur noch für Warmwasser.
+Im Herbst zurück auf ☀/☽ (oder ☀/❄).
+
+**Urlaub im Winter:** Programmwahlschalter auf **❄/❄**. Anlage **eingeschaltet lassen**.
+Der Frostschutz schaltet den Kessel bei Außentemperaturen unter +1 °C selbstständig ein,
+alle Schaltzeiten bleiben gespeichert. Bei Rückkehr einfach zurückdrehen.
+
+**Urlaub im Sommer:** Programmwahlschalter auf **❄/❄**, dann wird auch kein Warmwasser
+bereitet. Nach der Rückkehr dauert es etwa eine Stunde, bis der Speicher warm ist.
+
+**Ganz abschalten (nur für Servicearbeiten):**
+
+1. Anlagenschalter an der Regelung auf `O`.
+2. Hauptschalter (Not-Aus außerhalb des Heizraums) ausschalten.
+
+Dann gibt es **keinen Frostschutz** mehr. Die Uhr läuft dank Gangreserve weiter,
+die Anzeige ist dunkel.
+
+**Schornsteinfeger:** Der Prüfschalter hinter der Klappe zwingt den Brenner für die
+Messung auf Dauerbetrieb mit hoher Temperatur. Nach der Messung **unbedingt
+zurückstellen**, sonst läuft der Kessel dauerhaft heiß.
+
+
+## Was tun, wenn …
+
+| Beobachtung                                              | Mögliche Ursache                                  | Abhilfe                                                                                   |
+|----------------------------------------------------------|---------------------------------------------------|-------------------------------------------------------------------------------------------|
+| Anlage tut gar nichts, Anzeige dunkel                     | Anlagenschalter auf `O`, Hauptschalter aus, Sicherung | Anlagenschalter auf `I`, Hauptschalter prüfen, Sicherung prüfen, sonst Fachbetrieb       |
+| Heizkörper kalt, obwohl Heizzeit                          | Programmwahlschalter falsch (❄/❄, 🚰/❄), Schaltzeit falsch, Uhr falsch | Programm, Uhrzeit, Wochentag und Schaltzeiten kontrollieren                  |
+| Heizkörper kalt, rote LED 🚰 leuchtet                     | Speicher wird gerade geladen (Vorrang)            | Abwarten, nach einigen Minuten läuft die Heizung weiter                                   |
+| Heizkörper kalt, draußen mild                             | Sommerabschaltung (Außentemperatur über Raumsoll) | Normal. Bei Bedarf ☀-Knopf höher                                                         |
+| Rote Störlampe am Brenner / an der Regelung               | Brenner hat nicht gezündet                        | Einmal Entstörknopf am Brenner drücken. Erneut Störung: Fachbetrieb. Ölstand prüfen       |
+| Grüne LED ☽ und rote LED 🚰 **blinken**                    | Programmwahlschalter steht zwischen zwei Rasten   | Schalter sauber auf eine Raste drehen                                                     |
+| Morgens zu kalt, abends passt es                          | Heizbeginn zu spät                                | Rote Zeit von `SU1` früher stellen                                                        |
+| Nachts zu warm                                            | Absenkung wirkt nicht (Programm ☀/☀?) oder träges Haus | Programm ☀/☽ oder ☀/❄, ☽-Knopf niedriger, Heizende früher                            |
+| Kein Warmwasser                                           | Programm ❄/❄ oder ☽/☽, `SU2`-Zeit vorbei, 🚰-Knopf auf `0` | Programm prüfen, `SU2`-Zeiten prüfen, 🚰-Knopf auf 50                                |
+| Uhrzeit stimmt nach Zeitumstellung nicht                   | Alte Sommerzeitregel im Gerät                      | Uhrzeit von Hand stellen ([Uhrzeit und Wochentag](heizzeiten.md#uhrzeit-und-wochentag))                                                    |
+
+Bei allem anderen: Fachbetrieb anrufen. Nichts am Brenner, an der Elektrik oder an
+den Begrenzern hinter der Klappe verändern.
+
+
+## Energiespartipps
+
+- **Heizzeiten eng fassen.** Nur heizen, wenn jemand da ist. Zwei Zeiträume nutzen,
+  wenn tagsüber niemand zu Hause ist.
+- **Nicht überheizen.** Jedes Grad weniger Raumtemperatur spart etwa 6 % Heizkosten.
+  20 °C Wohnräume, 17 – 18 °C Schlafzimmer reichen meist.
+- **Nachtabsenkung nutzen** (Programm ☀/☽) statt nachts durchzuheizen. Bei massiven
+  Häusern kann ☀/❄ (nachts aus) noch sparsamer sein, wenn es morgens nicht zu kalt wird.
+- **Sommer: auf 🚰/❄.** Dann läuft der Kessel nur für Warmwasser.
+- **Warmwasser-Zeiten begrenzen** und 50 – 55 °C einstellen.
+- **Stoßlüften** mit ganz geöffnetem Fenster, dabei Thermostate zudrehen.
+  Keine Dauerkippstellung.
+- **Heizkörper freihalten**, Rollläden bei Dunkelheit schließen.
+- **Heizkennlinie so flach wie möglich** ([Heizkennlinie (Neigung und Niveau)](temperaturen.md#heizkennlinie-neigung-und-niveau)). Jede Senkung der Vorlauf-
+  temperatur spart Brennstoff, solange es noch warm genug wird.
+- **Jährliche Wartung** durch den Fachbetrieb (Brennereinstellung, Reinigung).

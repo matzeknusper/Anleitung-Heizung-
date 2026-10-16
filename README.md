@@ -4,7 +4,10 @@ Vereinfachte Anleitung für die Heizungsregelung **Viessmann Trimatik** am Ölke
 **Viessmann Vitola-biferral-RN**. Sie enthält nur das, was man im Alltag braucht:
 Heizzeiten, Raumtemperatur, Betriebsprogramme, Warmwasser und die wichtigsten
 Hintergründe. Die vollständige Original-Anleitung liegt unter
-[`original/`](original/Viessmann_Trimatik-MC_Betriebsanleitung_5581083.pdf).
+[`docs/original/`](docs/original/Viessmann_Trimatik-MC_Betriebsanleitung_5581083.pdf).
+
+> 🌐 **Als Website lesen:** <https://matzeknusper.github.io/Anleitung-Heizung-/>
+> (GitHub Pages, gebaut mit Material for MkDocs aus dem Ordner `docs/`).
 
 > **Hinweis zur Quelle:** Die Original-Anleitung beschreibt die **Trimatik-MC**.
 > Das eingebaute Gerät ist die etwas ältere **Trimatik** (Tasten `CL`, `UHR`, `WT`,
@@ -48,7 +51,7 @@ Hintergründe. Die vollständige Original-Anleitung liegt unter
 
 ## 1. Die Anlage
 
-![Typenschild](bilder/typenschild.jpg)
+![Typenschild](docs/bilder/typenschild.jpg)
 
 | Angabe                      | Wert                                                   |
 |-----------------------------|--------------------------------------------------------|
@@ -79,7 +82,7 @@ einen Neustart über den Entstörknopf am Brenner versuchen, danach Fachbetrieb 
 
 ## 2. Bedienelemente
 
-![Schaltuhr](bilder/schaltuhr.jpg)
+![Schaltuhr](docs/bilder/schaltuhr.jpg)
 
 ### Schaltuhr (linker Block)
 
@@ -203,11 +206,13 @@ Die Anzeige geht bei Stromausfall nur zum Stromsparen aus.
 **Uhrzeit anzeigen:** Taste `UHR` kurz drücken.
 
 **Uhrzeit stellen:**
+
 1. Taste `UHR` gedrückt halten.
 2. Gleichzeitig am Drehknopf drehen, bis die richtige Zeit steht (`−` zurück, `+` vor).
 3. Taste loslassen.
 
 **Wochentag stellen:**
+
 1. Taste `WT` gedrückt halten.
 2. Am Drehknopf drehen, bis ▲ unter der richtigen Ziffer steht (1 = Mo … 7 = So).
 3. Taste loslassen.
@@ -385,6 +390,7 @@ alle Schaltzeiten bleiben gespeichert. Bei Rückkehr einfach zurückdrehen.
 bereitet. Nach der Rückkehr dauert es etwa eine Stunde, bis der Speicher warm ist.
 
 **Ganz abschalten (nur für Servicearbeiten):**
+
 1. Anlagenschalter an der Regelung auf `O`.
 2. Hauptschalter (Not-Aus außerhalb des Heizraums) ausschalten.
 
@@ -478,4 +484,4 @@ den Begrenzern hinter der Klappe verändern.
 ---
 
 *Quelle: Viessmann Betriebsanleitung Trimatik-MC, Best.-Nr. 7450 263, 5581 083 (3/95),
-gekürzt und auf das eingebaute Gerät bezogen. Typenschild und Bedienfeld siehe `bilder/`.*
+gekürzt und auf das eingebaute Gerät bezogen. Typenschild und Bedienfeld siehe `docs/bilder/`.*

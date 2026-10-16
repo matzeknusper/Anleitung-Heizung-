@@ -1,0 +1,11 @@
+/* Bilder nicht größer als nötig, abgerundet */
+.md-typeset img {
+  max-height: 480px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .25);
+}
+/* Tabellen über volle Breite */
+.md-typeset__table { width: 100%; }
+.md-typeset table:not([class]) { font-size: .72rem; }
+/* Mermaid-Diagramm zentrieren */
+.mermaid { display: flex; justify-content: center; }
