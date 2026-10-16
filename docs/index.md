@@ -4,7 +4,10 @@ Vereinfachte Anleitung für die Heizungsregelung **Viessmann Trimatik** am Ölke
 **Viessmann Vitola-biferral-RN**. Sie enthält nur das, was man im Alltag braucht:
 Heizzeiten, Raumtemperatur, Betriebsprogramme, Warmwasser und die wichtigsten
 Hintergründe. Die vollständige Original-Anleitung liegt unter
-[Original-PDF](original/Viessmann_Trimatik-MC_Betriebsanleitung_5581083.pdf).
+[`original/`](original/Viessmann_Trimatik-MC_Betriebsanleitung_5581083.pdf).
+
+> 🌐 **Als Website lesen:** <https://matzeknusper.github.io/Anleitung-Heizung-/>
+> (GitHub Pages, gebaut mit Material for MkDocs aus dem Ordner `docs/`).
 
 !!! info "Hinweis zur Quelle"
 
@@ -19,18 +22,16 @@ Hintergründe. Die vollständige Original-Anleitung liegt unter
 
 | Ich will …                                   | Dann …                                                                                   |
 |----------------------------------------------|------------------------------------------------------------------------------------------|
-| normal heizen (Tag warm, Nacht abgesenkt)     | Programmwahlschalter auf **☀/☽**, Heizzeiten über Kanal `SU1` einstellen                  |
-| es tagsüber wärmer / kälter haben             | Drehknopf **☀** ein bis zwei Teilstriche Richtung **+** / **−** (1 Teilstrich ≈ 1 °C)      |
-| nachts wärmer / kälter                        | Drehknopf **☽** verstellen (1 Teilstrich ≈ 1 °C)                                          |
-| nur Warmwasser, keine Heizung (Sommer)        | Programmwahlschalter auf **🚰/❄**                                                          |
-| in den Urlaub fahren                          | Programmwahlschalter auf **❄/❄** (Frostschutz bleibt aktiv), Anlage **nicht** ausschalten |
-| ganztägig heizen (Feiertag, Besuch)           | Programmwahlschalter auf **☀/☀**, danach zurückstellen                                   |
+| normal heizen (Tag warm, Nacht abgesenkt)     | Programmwahlschalter auf <img class="sym col" src="bilder/symbole/sonne_rot.png" alt="Sonne" title="Normalbetrieb (Tag) – „rot“, in den Heizzeiten" height="20">/<img class="sym col" src="bilder/symbole/mond_blau.png" alt="Mond" title="Reduzierter Betrieb (Nacht) – „blau“, außerhalb der Heizzeiten" height="20">, Heizzeiten über Kanal `SU1` einstellen                  |
+| es tagsüber wärmer / kälter haben             | Drehknopf <img class="sym" src="bilder/symbole/sonne.png" alt="Sonne" title="Normalbetrieb (Tag)" height="20"> ein bis zwei Teilstriche Richtung **+** / **−** (1 Teilstrich ≈ 1 °C)      |
+| nachts wärmer / kälter                        | Drehknopf <img class="sym" src="bilder/symbole/mond.png" alt="Mond" title="Reduzierter Betrieb (Nacht)" height="20"> verstellen (1 Teilstrich ≈ 1 °C)                                          |
+| nur Warmwasser, keine Heizung (Sommer)        | Programmwahlschalter auf <img class="sym col" src="bilder/symbole/hahn_rot.png" alt="Wasserhahn" title="Trinkwassererwärmung – „rot“, in den Heizzeiten" height="20">/<img class="sym col" src="bilder/symbole/schnee_blau.png" alt="Schneeflocke" title="Abschaltbetrieb mit Frostschutz – „blau“, außerhalb der Heizzeiten" height="20">                                                          |
+| in den Urlaub fahren                          | Programmwahlschalter auf <img class="sym col" src="bilder/symbole/schnee_rot.png" alt="Schneeflocke" title="Abschaltbetrieb mit Frostschutz – „rot“, in den Heizzeiten" height="20">/<img class="sym col" src="bilder/symbole/schnee_blau.png" alt="Schneeflocke" title="Abschaltbetrieb mit Frostschutz – „blau“, außerhalb der Heizzeiten" height="20"> (Frostschutz bleibt aktiv), Anlage **nicht** ausschalten |
+| ganztägig heizen (Feiertag, Besuch)           | Programmwahlschalter auf <img class="sym col" src="bilder/symbole/sonne_rot.png" alt="Sonne" title="Normalbetrieb (Tag) – „rot“, in den Heizzeiten" height="20">/<img class="sym col" src="bilder/symbole/sonne_blau.png" alt="Sonne" title="Normalbetrieb (Tag) – „blau“, außerhalb der Heizzeiten" height="20">, danach zurückstellen                                   |
 | die Uhr stellen                               | Taste `UHR` gedrückt halten und am Drehknopf drehen                                       |
 
 
 ## Die Anlage
-
-![Typenschild](bilder/typenschild.jpg)
 
 | Angabe                      | Wert                                                   |
 |-----------------------------|--------------------------------------------------------|
@@ -46,7 +47,7 @@ Hintergründe. Die vollständige Original-Anleitung liegt unter
 **Was die Regelung macht:** Sie misst die **Außentemperatur** (Sensor an der Hauswand)
 und stellt danach die **Kesselwassertemperatur** ein: je kälter draußen, desto heißer
 das Heizungswasser. Den Zusammenhang legt die **Heizkennlinie** fest ([Heizkennlinie (Neigung und Niveau)](temperaturen.md#heizkennlinie-neigung-und-niveau)).
-Es gibt **keinen Raumfühler**. Die Drehknöpfe ☀ und ☽ verschieben nur die Kennlinie,
+Es gibt **keinen Raumfühler**. Die Drehknöpfe <img class="sym" src="bilder/symbole/sonne.png" alt="Sonne" title="Normalbetrieb (Tag)" height="20"> und <img class="sym" src="bilder/symbole/mond.png" alt="Mond" title="Reduzierter Betrieb (Nacht)" height="20"> verschieben nur die Kennlinie,
 die tatsächliche Raumtemperatur ergibt sich aus Kennlinie, Außentemperatur und den
 Thermostatventilen an den Heizkörpern.
 
@@ -60,4 +61,4 @@ einen Neustart über den Entstörknopf am Brenner versuchen, danach Fachbetrieb 
 ---
 
 *Quelle: Viessmann Betriebsanleitung Trimatik-MC, Best.-Nr. 7450 263, 5581 083 (3/95),
-gekürzt und auf das eingebaute Gerät bezogen. Typenschild und Bedienfeld siehe `bilder/`.*
+gekürzt und auf das eingebaute Gerät bezogen. Foto des Bedienfelds und Symbole siehe `bilder/`.*
