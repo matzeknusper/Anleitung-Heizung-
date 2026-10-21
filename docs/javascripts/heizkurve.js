@@ -253,7 +253,7 @@
   }
 
   // Rückführungsplan: stark verstellte Kurven in Etappen auf einen Startwert bringen
-  var START = { neigung: 8, niveau: 4, sonne: 7 };   // Neigung 1,2 · Niveau 0 · Tag N = Werkseinstellung
+  var START = { neigung: 8, niveau: 4, sonne: 7, mond: 9 };   // Neigung 1,2 · Niveau 0 · Tag N · Nacht N = Werkseinstellung
   function copyPos(p) { return { sonne: p.sonne, mond: p.mond, neigung: p.neigung, niveau: p.niveau }; }
   function plan(s) {
     var d = derivedPos(s.pos), na = normAt();
@@ -262,6 +262,10 @@
     var low = !high && (vn < 45 || d.niveau <= -9 || d.neigung <= 0.6);
     if (!high && !low) return null;
     var pos = copyPos(s.pos), stages = [];
+    // Grundstellung: Tag- und Nachtknopf auf N, wird mit Etappe 1 zusammen übernommen
+    var prep = ["sonne", "mond"].filter(function (k) { return Math.abs(pos[k] - START[k]) > 0.01; })
+      .map(function (k) { return { k: k, from: pos[k], to: START[k] }; });
+    prep.forEach(function (c) { pos[c.k] = c.to; });
     function walk(k, maxStep) {
       var guard = 0;
       while (Math.abs(START[k] - pos[k]) > 0.01 && guard++ < 20) {
@@ -273,10 +277,11 @@
     }
     walk("niveau", 4);
     walk("neigung", 2);
-    if (high && d.sonne >= 3) walk("sonne", 2);
-    if (!stages.length) return null;
+    if (!stages.length && !prep.length) return null;
+    if (!stages.length) stages.push({ k: null, fromPos: copyPos(pos), toPos: copyPos(pos) });
+    if (prep.length) { stages[0].prep = prep; stages[0].fromPos = copyPos(s.pos); }
     stages.forEach(function (st) { st.before = derivedPos(st.fromPos); st.after = derivedPos(st.toPos); });
-    return { dir: high ? "down" : "up", stages: stages, cur: d, vm: vm, vn: vn, na: na,
+    return { dir: high ? "down" : "up", stages: stages, cur: d, vm: vm, vn: vn, na: na, prep: prep,
       capAt: crossAt(d.day, s.tmax), finalPos: pos };
   }
   function strokes(from, to) {
@@ -864,7 +869,7 @@
           var bu = el("button", { type: "button", class: "hk-btn" }, rowD, "Rückgängig");
           bu.addEventListener("click", undo);
         }
-        if (P && P.dir === "down") {
+        if (P && P.dir === "down" && P.stages[0].k) {
           var nx = P.stages[0];
           el("p", { class: "hk-rec__note" }, recOut, "Nächste Etappe in zwei bis drei Tagen, wenn es warm genug bleibt: " +
             KLABEL[nx.k] + " " + knobText(nx.k, nx.from) + " → " + knobText(nx.k, nx.to) + " (" + strokes(nx.from, nx.to) + ").");
@@ -956,21 +961,28 @@
           (P.capAt != null && P.capAt > -20 ? " und ab " + atText(P.capAt) + " außen dauerhaft auf die Obergrenze von " + num(s.tmax) + " °C" : ", bei −10 °C auf " + deg(vc)) +
           ". Für Heizkörper üblich sind etwa 38 °C bei +10 °C und 60 bis 65 °C bei −10 °C. So begrenzen nur noch die Thermostatventile die Raumtemperatur, und der Kessel verliert mehr Wärme als nötig."
         : "Mit Neigung " + num(d.neigung, 2) + " und Niveau " + signed(d.niveau) + " kommt bei −10 °C nur " + deg(vc) + " Vorlauf. Für Heizkörper ist das sehr wenig.");
-      el("p", {}, recOut, "Ziel ist der übliche Startwert für Heizkörper: Neigung 1,2 und Niveau 0" +
-        (P.stages.some(function (st) { return st.k === "sonne"; }) ? ", Tag-Knopf auf N" : "") +
-        ". Das ist die Werkseinstellung, im Diagramm die graue Linie. Von dort stellst du mit den Fragen fein ein.");
+      el("p", {}, recOut, "Ziel ist der übliche Startwert für Heizkörper: Neigung 1,2 und Niveau 0, Tag- und Nachtknopf auf N. " +
+        "Das ist die Werkseinstellung, im Diagramm die graue Linie. Von dort stellst du mit den Fragen fein ein.");
+      if (P.prep.length)
+        el("p", {}, recOut, "Zuerst kommen Tag- und Nachtknopf zurück auf N, gleichzeitig mit Etappe 1. Sonst vermischen sich zwei Verstellungen, " +
+          "und der Tag-Knopf bleibt frei für die spätere Feinabstimmung. Allein auf N gestellt würde er die zu hohe Kurve noch etwas anheben, zusammen mit Etappe 1 sinkt sie trotzdem.");
       var ol = el("ol", { class: "hk-rec__acts hk-rec__stages" }, recOut);
       P.stages.forEach(function (st, i) {
         var li = el("li", {}, ol);
-        var head = el("div", { class: "hk-rec__act" }, li);
-        el("span", { class: "hk-rec__stage" }, head, "Etappe " + (i + 1) + ": ");
-        el("span", { class: "hk-rec__sym", "aria-hidden": "true" }, head, KSYM[st.k]);
-        el("strong", {}, head, KLABEL[st.k] + " ");
-        el("span", { class: "hk-rec__from" }, head, knobText(st.k, st.from));
-        el("span", { "aria-hidden": "true" }, head, " → ");
-        el("strong", { class: "hk-rec__to" }, head, knobText(st.k, st.to));
+        function line(k, from, to, tag) {
+          var head = el("div", { class: "hk-rec__act" }, li);
+          el("span", { class: "hk-rec__stage" }, head, tag);
+          el("span", { class: "hk-rec__sym", "aria-hidden": "true" }, head, KSYM[k]);
+          el("strong", {}, head, KLABEL[k] + " ");
+          el("span", { class: "hk-rec__from" }, head, knobText(k, from));
+          el("span", { "aria-hidden": "true" }, head, " → ");
+          el("strong", { class: "hk-rec__to" }, head, knobText(k, to));
+          el("span", { class: "hk-rec__strokes" }, head, " · " + strokes(from, to));
+        }
+        (st.prep || []).forEach(function (c, j) { line(c.k, c.from, c.to, j === 0 ? "Etappe " + (i + 1) + ", Grundstellung: " : "und "); });
+        if (st.k) line(st.k, st.from, st.to, st.prep ? "dazu: " : "Etappe " + (i + 1) + ": ");
         function v(c, at) { var x = effCurve(s, c, at); return x == null ? "aus" : num(Math.round(x)); }
-        el("div", { class: "hk-rec__why" }, li, strokes(st.from, st.to) + ". Vorlauf bei +10 °C: " + v(st.before.day, 10) + " → " + v(st.after.day, 10) +
+        el("div", { class: "hk-rec__why" }, li, "Vorlauf bei +10 °C: " + v(st.before.day, 10) + " → " + v(st.after.day, 10) +
           " °C · bei 0 °C: " + v(st.before.day, 0) + " → " + v(st.after.day, 0) + " °C · bei −10 °C: " + v(st.before.day, -10) + " → " + v(st.after.day, -10) + " °C");
       });
       el("p", { class: "hk-rec__note" }, recOut,

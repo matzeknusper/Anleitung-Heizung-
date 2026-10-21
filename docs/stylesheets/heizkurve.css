@@ -262,3 +262,4 @@ label.hk-legend__item { cursor: pointer; }
 .hk-rec__stage { color: var(--hk-ink-2); font-weight: 600; }
 .md-typeset ul.hk-rec__todo { margin: 6px 0 6px 0; padding: 0; list-style: none; }
 .md-typeset ul.hk-rec__todo li { margin: 0 0 4px; font-size: .74rem; }
+.hk-rec__strokes { color: var(--hk-ink-2); font-size: .64rem; }

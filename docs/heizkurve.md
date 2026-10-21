@@ -193,12 +193,20 @@ Raumtemperatur begrenzen nur noch die Thermostatventile.
 
 Üblich ist dann, die Kurve **in Etappen auf einen Startwert** zurückzuführen, nämlich
 Neigung 1,2 und Niveau 0, also die Werkseinstellung. Der Rechner erkennt solche Fälle und
-schlägt die Etappen vor. Für das Beispiel sieht das so aus:
+schlägt die Etappen vor.
+
+**Zuerst die Grundstellung:** Tag- und Nachtknopf kommen zurück auf N, und zwar zusammen
+mit Etappe 1. Sonst vermischen sich zwei Verstellungen, und du weißt hinterher nicht, was
+gewirkt hat. Der Tag-Knopf bleibt so frei für die spätere Feinabstimmung. Steht er gerade
+unter N, hebt das Zurückstellen allein die Kurve etwas an. Zusammen mit Etappe 1 sinkt sie
+trotzdem deutlich.
+
+Für das Beispiel mit Tag- und Nachtknopf auf N sieht das so aus:
 
 | Etappe | Änderung am Kessel | Vorlauf bei +10 °C | bei 0 °C | bei −10 °C |
 |--------|--------------------|--------------------|----------|------------|
 | vorher | Neigung 1,8 · Niveau +21 | 68 °C | 75 °C | 75 °C |
-| 1 | Niveau +21 → +9 (4 Striche gegen den Uhrzeigersinn) | 56 °C | 75 °C | 75 °C |
+| 1 | Tag und Nacht auf N, dazu Niveau +21 → +9 (4 Striche gegen den Uhrzeigersinn) | 56 °C | 75 °C | 75 °C |
 | 2 | Niveau +9 → 0 (3 Striche gegen den Uhrzeigersinn) | 47 °C | 68 °C | 75 °C |
 | 3 | Neigung 1,8 → 1,4 (2 Striche gegen den Uhrzeigersinn) | 41 °C | 57 °C | 68 °C |
 | 4 | Neigung 1,4 → 1,2 (1 Strich gegen den Uhrzeigersinn) | 38 °C | 52 °C | 61 °C |
