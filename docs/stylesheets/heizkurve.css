@@ -254,3 +254,11 @@ label.hk-legend__item { cursor: pointer; }
 .hk-line--sug-night { stroke-width: 2; opacity: .8; }
 .hk-key--sug { border-top-style: dashed; border-color: var(--hk-sug); }
 @media print { .hk-q__seg, .hk-rec__out .hk-btn { display: none !important; } }
+
+/* Rückführungsplan und Diagnose */
+.hk-rec__out.is-plan { border-left-color: var(--hk-sug); }
+.hk-rec__out.is-warn { border-left-color: #c98500; }
+.md-typeset ol.hk-rec__stages li { margin-bottom: 8px; }
+.hk-rec__stage { color: var(--hk-ink-2); font-weight: 600; }
+.md-typeset ul.hk-rec__todo { margin: 6px 0 6px 0; padding: 0; list-style: none; }
+.md-typeset ul.hk-rec__todo li { margin: 0 0 4px; font-size: .74rem; }

@@ -184,6 +184,36 @@ Die Grundregeln für alle Schritte:
 - **Alles ins [Protokoll](#protokoll) schreiben.** Nach zwei, drei Wochen siehst du ein
   klares Muster.
 
+### Sonderfall · Die Einstellung ist stark verstellt
+
+Hat zum Beispiel ein Vorbesitzer alles hochgedreht, helfen kleine Ein-Strich-Schritte nicht
+weiter. Ein typisches Bild ist **Neigung 1,8 und Niveau +21**: Dann regelt der Kessel schon
+bei +10 °C auf 68 °C und ab etwa +7 °C dauerhaft auf die Obergrenze von 75 °C. Die
+Raumtemperatur begrenzen nur noch die Thermostatventile.
+
+Üblich ist dann, die Kurve **in Etappen auf einen Startwert** zurückzuführen, nämlich
+Neigung 1,2 und Niveau 0, also die Werkseinstellung. Der Rechner erkennt solche Fälle und
+schlägt die Etappen vor. Für das Beispiel sieht das so aus:
+
+| Etappe | Änderung am Kessel | Vorlauf bei +10 °C | bei 0 °C | bei −10 °C |
+|--------|--------------------|--------------------|----------|------------|
+| vorher | Neigung 1,8 · Niveau +21 | 68 °C | 75 °C | 75 °C |
+| 1 | Niveau +21 → +9 (4 Striche gegen den Uhrzeigersinn) | 56 °C | 75 °C | 75 °C |
+| 2 | Niveau +9 → 0 (3 Striche gegen den Uhrzeigersinn) | 47 °C | 68 °C | 75 °C |
+| 3 | Neigung 1,8 → 1,4 (2 Striche gegen den Uhrzeigersinn) | 41 °C | 57 °C | 68 °C |
+| 4 | Neigung 1,4 → 1,2 (1 Strich gegen den Uhrzeigersinn) | 38 °C | 52 °C | 61 °C |
+
+- **Pro Etappe zwei bis drei Tage** warten.
+- **Thermostate in dieser Zeit eher offen lassen**, im Referenzraum auf 5. Sonst merkst du
+  nicht, was die Kurve liefert.
+- **Wird es nach einer Etappe zu kalt**, eine Etappe zurück. Das ist ungefähr die Kurve,
+  die dein Haus braucht. Danach mit den Fragen im Rechner fein einstellen.
+- **Direkt auf den Startwert** geht auch und ist im Herbst unkritisch. Du merkst dann aber
+  nicht, ab welcher Stufe es knapp wird.
+- **Ist es trotz der hohen Kurve zu kalt**, liegt es fast nie an der Kurve. Dann zuerst
+  [entlüften](entlueften.md), die Thermostatventile prüfen und den
+  [hydraulischen Abgleich](abgleich.md) machen.
+
 ### Schritt 1 · Beobachten (1 bis 2 Tage)
 
 Ändere noch nichts. Notiere zweimal am Tag Außentemperatur, Raumtemperatur im Referenzraum

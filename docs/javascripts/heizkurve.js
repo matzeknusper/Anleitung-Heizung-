@@ -60,7 +60,7 @@
     pos: { sonne: 7, mond: 9, neigung: 8, niveau: 4 },
     at: 0, mode: "tag", tmax: 75, tmin: 35, showNight: true, showWerk: true,
     compare: null, ist: null,
-    feel: { mild: null, kalt: null, nacht: null }, undo: null, autoCmp: false, applied: false
+    feel: { mild: null, kalt: null, nacht: null }, undo: null, autoCmp: false, applied: false, last: null
   };
   function load() {
     var s = JSON.parse(JSON.stringify(DEFAULTS));
@@ -77,6 +77,7 @@
         if (o.feel) ["mild", "kalt", "nacht"].forEach(function (k) { if (typeof o.feel[k] === "string") s.feel[k] = o.feel[k]; });
         if (o.undo && typeof o.undo.neigung === "number") s.undo = o.undo;
         s.autoCmp = !!o.autoCmp; s.applied = !!o.applied;
+        if (Array.isArray(o.last)) s.last = o.last.filter(function (c) { return c && KNOBS[c.k] && typeof c.from === "number" && typeof c.to === "number"; });
       }
     } catch (e) { /* Speicher nicht verfügbar: Standardwerte */ }
     return s;
@@ -86,7 +87,7 @@
       window.localStorage.setItem(STORE, JSON.stringify({
         pos: s.pos, at: s.at, mode: s.mode, tmax: s.tmax, tmin: s.tmin,
         showNight: s.showNight, showWerk: s.showWerk, compare: s.compare,
-        feel: s.feel, undo: s.undo, autoCmp: s.autoCmp, applied: s.applied
+        feel: s.feel, undo: s.undo, autoCmp: s.autoCmp, applied: s.applied, last: s.last
       }));
     } catch (e) { /* ignorieren */ }
   }
@@ -224,6 +225,23 @@
       a.from = pos[a.k]; a.to = np; pos[a.k] = np; return true;
     });
     r.pos = pos;
+    // Kurve hängt schon an der Obergrenze bzw. liefert schon viel: mehr Kurve hilft nicht
+    var cur = derivedPos(s.pos);
+    function dropWarming(note) {
+      var had = r.acts.length;
+      r.acts = r.acts.filter(function (a) {
+        if (a.k === "mond" || a.to < a.from) return true;
+        pos[a.k] = a.from; return false;
+      });
+      if (r.acts.length !== had) r.notes.push(note);
+    }
+    var vCold = effCurve(s, cur.day, -10), vMild = effCurve(s, cur.day, 10);
+    if (K === "kalt" && vCold != null && vCold >= s.tmax - 0.5)
+      dropWarming("Bei Frost liefert der Kessel schon die Obergrenze von " + num(s.tmax) + " °C. Über die Kurve geht nicht mehr. " +
+        "Die Ursache liegt eher bei Luft in den Heizkörpern, klemmenden Thermostatventilen, fehlendem Abgleich oder zu kleinen Heizkörpern.");
+    if (M === "kalt" && vMild != null && vMild >= 55)
+      dropWarming("An milden Tagen liefert der Kessel schon " + deg(vMild) + ". Wenn es trotzdem zu kalt ist, liegt es kaum an der Kurve. " +
+        "Prüfe Entlüftung, Thermostatventile und den hydraulischen Abgleich.");
     if (r.acts.length) {
       var before = derivedPos(s.pos), after = derivedPos(pos);
       r.before = before; r.after = after;
@@ -232,6 +250,38 @@
         r.notes.push("Mit dem Vorschlag stößt die Kurve bei " + atText(crossAt(after.day, s.tmax)) + " an die " + num(s.tmax) + "-°C-Grenze.");
     }
     return r;
+  }
+
+  // Rückführungsplan: stark verstellte Kurven in Etappen auf einen Startwert bringen
+  var START = { neigung: 8, niveau: 4, sonne: 7 };   // Neigung 1,2 · Niveau 0 · Tag N = Werkseinstellung
+  function copyPos(p) { return { sonne: p.sonne, mond: p.mond, neigung: p.neigung, niveau: p.niveau }; }
+  function plan(s) {
+    var d = derivedPos(s.pos), na = normAt();
+    var vm = curve(10, d.day), vn = curve(na, d.day);
+    var high = vm > 45 || vn > s.tmax + 5 || d.niveau >= 9 || d.neigung >= 1.8;
+    var low = !high && (vn < 45 || d.niveau <= -9 || d.neigung <= 0.6);
+    if (!high && !low) return null;
+    var pos = copyPos(s.pos), stages = [];
+    function walk(k, maxStep) {
+      var guard = 0;
+      while (Math.abs(START[k] - pos[k]) > 0.01 && guard++ < 20) {
+        var diff = START[k] - pos[k], step = (diff > 0 ? 1 : -1) * Math.min(maxStep, Math.abs(diff));
+        var from = copyPos(pos);
+        pos[k] = pos[k] + step;
+        stages.push({ k: k, from: from[k], to: pos[k], fromPos: from, toPos: copyPos(pos) });
+      }
+    }
+    walk("niveau", 4);
+    walk("neigung", 2);
+    if (high && d.sonne >= 3) walk("sonne", 2);
+    if (!stages.length) return null;
+    stages.forEach(function (st) { st.before = derivedPos(st.fromPos); st.after = derivedPos(st.toPos); });
+    return { dir: high ? "down" : "up", stages: stages, cur: d, vm: vm, vn: vn, na: na,
+      capAt: crossAt(d.day, s.tmax), finalPos: pos };
+  }
+  function strokes(from, to) {
+    var n = Math.abs(to - from);
+    return (n === 1 ? "1 Strich " : num(n) + " Striche ") + (to > from ? "im Uhrzeigersinn" : "gegen den Uhrzeigersinn");
   }
 
   // ---------------------------------------------------------------- DOM-Helfer
@@ -794,18 +844,53 @@
       });
       // Ergebnis
       recOut.textContent = "";
-      var r = recommend(s);
-      sug = (!s.applied && r.acts.length) ? r : null;
+      var r = recommend(s), P = plan(s), f = s.feel;
+      var cold = f.mild === "kalt" || f.kalt === "kalt";
+      var showPlan = P && !s.applied && ((P.dir === "down" && !cold) || (P.dir === "up" && cold));
+      sug = showPlan ? P.stages[0] : (!s.applied && r.acts.length && !(P && P.dir === "down" && cold)) ? r : null;
       if (s.applied) {
         recOut.className = "hk-rec__out is-done";
-        el("strong", {}, recOut, "✓ Übernommen.");
-        el("p", {}, recOut, "Stell die Knöpfe am Kessel genauso ein wie oben. Dann ein bis zwei Tage beobachten und hier wieder bewerten. Die alte Kurve siehst du als Vergleich im Diagramm.");
+        el("strong", {}, recOut, "✓ Übernommen. Stell am Kessel ein:");
+        var ul = el("ul", { class: "hk-rec__todo" }, recOut);
+        (s.last || []).forEach(function (c) {
+          var li = el("li", {}, ul);
+          el("span", { class: "hk-rec__sym", "aria-hidden": "true" }, li, KSYM[c.k]);
+          el("strong", {}, li, KLABEL[c.k] + " auf " + knobText(c.k, c.to));
+          li.appendChild(document.createTextNode(" (" + strokes(c.from, c.to) + ", vorher " + knobText(c.k, c.from) + ")"));
+        });
+        el("p", {}, recOut, "Dann zwei bis drei Tage beobachten und hier wieder bewerten. Die alte Kurve siehst du als Vergleich im Diagramm.");
+        var rowD = el("div", { class: "hk-row" }, recOut);
         if (s.undo) {
-          var bu = el("button", { type: "button", class: "hk-btn" }, recOut, "Rückgängig");
+          var bu = el("button", { type: "button", class: "hk-btn" }, rowD, "Rückgängig");
           bu.addEventListener("click", undo);
+        }
+        if (P && P.dir === "down") {
+          var nx = P.stages[0];
+          el("p", { class: "hk-rec__note" }, recOut, "Nächste Etappe in zwei bis drei Tagen, wenn es warm genug bleibt: " +
+            KLABEL[nx.k] + " " + knobText(nx.k, nx.from) + " → " + knobText(nx.k, nx.to) + " (" + strokes(nx.from, nx.to) + ").");
+          var bn = el("button", { type: "button", class: "hk-btn" }, rowD, "Nächste Etappe anzeigen");
+          bn.addEventListener("click", function () { s.applied = false; update(); });
         }
         return;
       }
+      if (P && P.dir === "down" && cold) {
+        recOut.className = "hk-rec__out is-warn";
+        el("h4", { class: "hk-rec__title" }, recOut, "Zu kalt, obwohl die Kurve sehr hoch steht");
+        el("p", {}, recOut, "Der Kessel liefert schon " + deg(effCurve(s, P.cur.day, 10)) + " bei +10 °C" +
+          (P.capAt != null ? " und ab " + atText(P.capAt) + " außen die Obergrenze von " + num(s.tmax) + " °C" : "") +
+          ". Wenn es trotzdem zu kalt ist, liegt es fast nie an der Kurve. Die Kurve deshalb nicht weiter anheben.");
+        var olD = el("ol", { class: "hk-rec__acts" }, recOut);
+        [["Heizkörper entlüften", "../entlueften/", "Luft im Heizkörper sieht aus wie eine zu niedrige Kurve."],
+         ["Thermostatventile prüfen", "../entlueften/#wenn-es-klemmt", "Ein klemmender Stift hält den Heizkörper kalt."],
+         ["Hydraulischen Abgleich machen", "../abgleich/", "Wenn einzelne Räume kalt bleiben und andere überheizen."]].forEach(function (x) {
+          var li = el("li", {}, olD);
+          el("a", { href: x[1] }, li, x[0]);
+          el("div", { class: "hk-rec__why" }, li, x[2]);
+        });
+        el("p", { class: "hk-rec__note" }, recOut, "Erst wenn das erledigt ist und es warm genug wird, die Kurve in Etappen absenken. Der Plan dafür erscheint hier, sobald du nicht mehr „zu kalt“ angibst.");
+        return;
+      }
+      if (showPlan) { renderPlan(P); return; }
       if (!r.answered) {
         recOut.className = "hk-rec__out is-empty";
         el("p", {}, recOut, "Beantworte eine oder mehrere Fragen. Dann bekommst du eine konkrete Empfehlung, welchen Knopf du um wie viel drehst.");
@@ -813,7 +898,7 @@
       }
       if (!r.acts.length) {
         recOut.className = "hk-rec__out is-empty";
-        el("p", {}, recOut, r.info || "Für diese Antworten gibt es keine Änderung.");
+        el("p", {}, recOut, r.info || (r.notes.length ? "An der Kurve solltest du hier nichts ändern." : "Für diese Antworten gibt es keine Änderung."));
         r.notes.forEach(function (n) { el("p", { class: "hk-rec__note" }, recOut, n); });
         return;
       }
@@ -859,13 +944,60 @@
       var a = el("a", { href: "../abgleich/" }, gen, "hydraulischen Abgleich");
       gen.appendChild(document.createTextNode("."));
     }
-    function apply(r) {
+    function renderPlan(P) {
+      var d = P.cur;
+      recOut.className = "hk-rec__out is-plan";
+      el("h4", { class: "hk-rec__title" }, recOut, P.dir === "down"
+        ? "Deine Kurve steht sehr hoch. So kommst du in Etappen auf einen Startwert"
+        : "Deine Kurve ist sehr flach. So kommst du in Etappen auf einen Startwert");
+      var vm = effCurve(s, d.day, 10), vc = effCurve(s, d.day, -10);
+      el("p", {}, recOut, P.dir === "down"
+        ? "Mit Neigung " + num(d.neigung, 2) + " und Niveau " + signed(d.niveau) + " regelt der Kessel bei +10 °C auf " + deg(vm) +
+          (P.capAt != null && P.capAt > -20 ? " und ab " + atText(P.capAt) + " außen dauerhaft auf die Obergrenze von " + num(s.tmax) + " °C" : ", bei −10 °C auf " + deg(vc)) +
+          ". Für Heizkörper üblich sind etwa 38 °C bei +10 °C und 60 bis 65 °C bei −10 °C. So begrenzen nur noch die Thermostatventile die Raumtemperatur, und der Kessel verliert mehr Wärme als nötig."
+        : "Mit Neigung " + num(d.neigung, 2) + " und Niveau " + signed(d.niveau) + " kommt bei −10 °C nur " + deg(vc) + " Vorlauf. Für Heizkörper ist das sehr wenig.");
+      el("p", {}, recOut, "Ziel ist der übliche Startwert für Heizkörper: Neigung 1,2 und Niveau 0" +
+        (P.stages.some(function (st) { return st.k === "sonne"; }) ? ", Tag-Knopf auf N" : "") +
+        ". Das ist die Werkseinstellung, im Diagramm die graue Linie. Von dort stellst du mit den Fragen fein ein.");
+      var ol = el("ol", { class: "hk-rec__acts hk-rec__stages" }, recOut);
+      P.stages.forEach(function (st, i) {
+        var li = el("li", {}, ol);
+        var head = el("div", { class: "hk-rec__act" }, li);
+        el("span", { class: "hk-rec__stage" }, head, "Etappe " + (i + 1) + ": ");
+        el("span", { class: "hk-rec__sym", "aria-hidden": "true" }, head, KSYM[st.k]);
+        el("strong", {}, head, KLABEL[st.k] + " ");
+        el("span", { class: "hk-rec__from" }, head, knobText(st.k, st.from));
+        el("span", { "aria-hidden": "true" }, head, " → ");
+        el("strong", { class: "hk-rec__to" }, head, knobText(st.k, st.to));
+        function v(c, at) { var x = effCurve(s, c, at); return x == null ? "aus" : num(Math.round(x)); }
+        el("div", { class: "hk-rec__why" }, li, strokes(st.from, st.to) + ". Vorlauf bei +10 °C: " + v(st.before.day, 10) + " → " + v(st.after.day, 10) +
+          " °C · bei 0 °C: " + v(st.before.day, 0) + " → " + v(st.after.day, 0) + " °C · bei −10 °C: " + v(st.before.day, -10) + " → " + v(st.after.day, -10) + " °C");
+      });
+      el("p", { class: "hk-rec__note" }, recOut,
+        "Pro Etappe zwei bis drei Tage warten. Die Thermostate in dieser Zeit eher offen lassen, im Referenzraum auf 5, sonst auf 3 bis 4, damit du merkst, was die Kurve liefert. " +
+        "Wird es nach einer Etappe zu kalt, geh eine Etappe zurück: Das ist ungefähr die Kurve, die dein Haus braucht. Danach mit den Fragen fein einstellen.");
+      if (P.dir === "up") el("p", { class: "hk-rec__note" }, recOut, "Nur nötig, wenn es dir zu kalt ist. Ist es warm genug, spart die flache Kurve Energie.");
+      var row = el("div", { class: "hk-row" }, recOut);
+      var b1 = el("button", { type: "button", class: "hk-btn hk-btn--primary" }, row, "Etappe 1 übernehmen");
+      b1.addEventListener("click", function () { applyPos(P.stages[0].toPos); });
+      if (P.stages.length > 1) {
+        var b2 = el("button", { type: "button", class: "hk-btn" }, row, "Direkt auf den Startwert");
+        b2.addEventListener("click", function () { applyPos(P.finalPos); });
+      }
+      el("span", { class: "hk-hint" }, row, "Etappe 1 im Diagramm grün gestrichelt.");
+      if (P.stages.length > 1)
+        el("p", { class: "hk-rec__note" }, recOut, "Direkt auf den Startwert geht schneller. Du merkst dann aber nicht, ab welcher Stufe es knapp wird, und musst bei Bedarf wieder hochgehen.");
+    }
+    function apply(r) { applyPos(r.pos); }
+    function applyPos(newPos) {
       var d = derived(s);
+      s.last = ORDER.filter(function (k) { return newPos[k] !== s.pos[k]; })
+        .map(function (k) { return { k: k, from: s.pos[k], to: newPos[k] }; });
       s.undo = { sonne: s.pos.sonne, mond: s.pos.mond, neigung: s.pos.neigung, niveau: s.pos.niveau };
       s.compare = { rt: d.day.rt, neigung: d.neigung, niveau: d.niveau,
         label: "vorher (Neigung " + num(d.neigung, 2) + " · Niveau " + signed(d.niveau) + " · ☀︎ " + knobText("sonne", s.pos.sonne) + ")" };
       s.autoCmp = true;
-      s.pos = r.pos;
+      s.pos = copyPos(newPos);
       s.feel = { mild: null, kalt: null, nacht: null };
       s.applied = true;
       knobs.forEach(function (k) { k.render(); });
