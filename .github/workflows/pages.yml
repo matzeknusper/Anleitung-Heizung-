@@ -69,8 +69,14 @@ jobs:
           done
           if curl -s "${BASE}heizkurve/" | grep -q 'id="hk-rechner"'; then echo "OK   Rechner-Platzhalter auf der Heizkurven-Seite"; else echo "FEHLT Rechner-Platzhalter"; fail=1; fi
           if curl -s "${BASE}javascripts/heizkurve.js" | grep -q 'function recommend'; then echo "OK   Rechner-Skript mit Empfehlungen"; else echo "FEHLT Rechner-Skript"; fail=1; fi
-          echo "--- Zur Info: andere Schreibweisen der Adresse"
-          for u in "${BASE}heizkurve" "$(echo "$BASE" | tr 'A-Z' 'a-z')heizkurve/"; do
-            echo "$(curl -s -o /dev/null -w '%{http_code} -> %{redirect_url}' "$u")  $u"
-          done
+          echo "--- Diagnose: welche Version ist live?"
+          echo "Titel der Startseite: $(curl -s "$BASE" | grep -o '<title>[^<]*</title>' | head -1)"
+          if curl -s "$BASE" | grep -q 'name="generator" content="mkdocs'; then
+            echo "Live ist der MkDocs-Build aus diesem Workflow."
+          else
+            echo "Live ist NICHT der MkDocs-Build. Vermutlich überschreibt die Einstellung"
+            echo "'Deploy from a branch' (Jekyll-Build der README) die Seite."
+            echo "Abhilfe: Settings > Pages > Build and deployment > Source: GitHub Actions"
+            echo "Jekyll-Variante der Heizkurven-Seite: $(curl -s -o /dev/null -w '%{http_code}' "${BASE}docs/heizkurve.html")  ${BASE}docs/heizkurve.html"
+          fi
           exit $fail
