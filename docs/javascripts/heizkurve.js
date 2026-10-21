@@ -59,7 +59,8 @@
   var DEFAULTS = {
     pos: { sonne: 7, mond: 9, neigung: 8, niveau: 4 },
     at: 0, mode: "tag", tmax: 75, tmin: 35, showNight: true, showWerk: true,
-    compare: null, ist: null
+    compare: null, ist: null,
+    feel: { mild: null, kalt: null, nacht: null }, undo: null, autoCmp: false, applied: false
   };
   function load() {
     var s = JSON.parse(JSON.stringify(DEFAULTS));
@@ -73,6 +74,9 @@
         if (typeof o.showNight === "boolean") s.showNight = o.showNight;
         if (typeof o.showWerk === "boolean") s.showWerk = o.showWerk;
         if (o.compare && typeof o.compare.neigung === "number") s.compare = o.compare;
+        if (o.feel) ["mild", "kalt", "nacht"].forEach(function (k) { if (typeof o.feel[k] === "string") s.feel[k] = o.feel[k]; });
+        if (o.undo && typeof o.undo.neigung === "number") s.undo = o.undo;
+        s.autoCmp = !!o.autoCmp; s.applied = !!o.applied;
       }
     } catch (e) { /* Speicher nicht verfügbar: Standardwerte */ }
     return s;
@@ -81,21 +85,23 @@
     try {
       window.localStorage.setItem(STORE, JSON.stringify({
         pos: s.pos, at: s.at, mode: s.mode, tmax: s.tmax, tmin: s.tmin,
-        showNight: s.showNight, showWerk: s.showWerk, compare: s.compare
+        showNight: s.showNight, showWerk: s.showWerk, compare: s.compare,
+        feel: s.feel, undo: s.undo, autoCmp: s.autoCmp, applied: s.applied
       }));
     } catch (e) { /* ignorieren */ }
   }
   function clamp(x, a, b) { return Math.max(a, Math.min(b, x)); }
 
-  function derived(s) {
-    var neigung = knobValue("neigung", s.pos.neigung), niveau = knobValue("niveau", s.pos.niveau);
+  function derivedPos(pos) {
+    var neigung = knobValue("neigung", pos.neigung), niveau = knobValue("niveau", pos.niveau);
     return {
       neigung: neigung, niveau: niveau,
-      sonne: knobValue("sonne", s.pos.sonne), mond: knobValue("mond", s.pos.mond),
-      day: { rt: 20 + knobValue("sonne", s.pos.sonne), neigung: neigung, niveau: niveau },
-      night: { rt: 14 + knobValue("mond", s.pos.mond), neigung: neigung, niveau: niveau }
+      sonne: knobValue("sonne", pos.sonne), mond: knobValue("mond", pos.mond),
+      day: { rt: 20 + knobValue("sonne", pos.sonne), neigung: neigung, niveau: niveau },
+      night: { rt: 14 + knobValue("mond", pos.mond), neigung: neigung, niveau: niveau }
     };
   }
+  function derived(s) { return derivedPos(s.pos); }
   var WERK = { rt: 20, neigung: 1.2, niveau: 0 };
 
   // Was der Kessel bei Außentemperatur `at` tut
@@ -120,6 +126,112 @@
   function effCurve(s, c, at) {
     if (at > c.rt + 1) return null;
     return clamp(curve(at, c), s.tmin, s.tmax);
+  }
+
+  // ---------------------------------------------------------------- Empfehlungen
+  var KLABEL = { sonne: "Raumtemperatur Tag", mond: "Raumtemperatur Nacht", neigung: "Neigung", niveau: "Niveau" };
+  var KSYM = { sonne: "☀︎", mond: "☽", neigung: "∡", niveau: "⫽" };
+  function knobText(k, p) {
+    var v = knobValue(k, p);
+    if (k === "sonne" || k === "mond") return v === 0 ? "N" : "N " + signed(v);
+    if (k === "neigung") return num(v, 2);
+    return v === 0 ? "0" : signed(v);
+  }
+  function normAt() {
+    try {
+      var o = JSON.parse(window.localStorage.getItem("ab-rechner-v1") || "null");
+      if (o && o.haus && typeof o.haus.normAt === "number") return o.haus.normAt;
+    } catch (e) { /* Standard */ }
+    return -12;
+  }
+  function crossAt(c, t) {
+    for (var at = c.rt; at >= -30; at -= 0.5) if (curve(at, c) >= t) return at;
+    return null;
+  }
+  function atText(a) { return (a > 0 ? "+" : "") + num(a) + " °C"; }
+
+  // Prüft die Einstellung gegen übliche Werte für eine Heizkörper-Anlage
+  function checks(s, d) {
+    var out = [], na = normAt(), vn = curve(na, d.day), vm = curve(10, d.day);
+    function add(kind, text) { out.push({ kind: kind, text: text }); }
+    if (vn > s.tmax) {
+      var x = crossAt(d.day, s.tmax);
+      add("warn", "Sehr steil: Die Tageskurve stößt schon bei " + atText(x) + " außen an die " + num(s.tmax) +
+        "-°C-Grenze. Für Heizkörper reichen meist 55 bis 70 °C bei " + atText(na) + ". Wird es bei Frost gut warm, Neigung einen Strich runter probieren.");
+    } else if (vn >= 70) {
+      add("info", "Eher hoch: " + deg(vn) + " Vorlauf bei " + atText(na) + ". Das passt zu kleinen Heizkörpern oder einem wenig gedämmten Haus. Werden alle Räume bei Frost gut warm, geht es vermutlich tiefer.");
+    } else if (vn >= 55) {
+      add("ok", "Bei " + atText(na) + " liefert die Tageskurve " + deg(vn) + ". Das ist für Heizkörper üblich.");
+    } else if (vn >= 45) {
+      add("ok", "Eher flach: " + deg(vn) + " bei " + atText(na) + ". Gut, wenn alle Räume warm werden, etwa bei guter Dämmung oder großen Heizkörpern. Bleibt es bei Frost kühl, Neigung einen Strich höher.");
+    } else {
+      add("warn", "Sehr flach für Heizkörper: nur " + deg(vn) + " bei " + atText(na) + ". Bei Frost reicht das selten. Neigung erhöhen, sobald es kalt wird.");
+    }
+    if (vm > 45) add("warn", "An milden Tagen recht heiß: " + deg(vm) + " bei +10 °C. Üblich sind 35 bis 42 °C. Meist stehen Niveau oder Tag-Knopf zu hoch.");
+    if (d.neigung > 1.6) add("info", "Neigung " + num(d.neigung, 2) + " ist für Heizkörper ungewöhnlich steil. Üblich sind 1,0 bis 1,4.");
+    else if (d.neigung < 0.8) add("info", "Neigung " + num(d.neigung, 2) + " ist eher ein Wert für Fußbodenheizungen. Für Heizkörper ist das ungewöhnlich flach.");
+    if (Math.abs(d.niveau) >= 9) add("info", "Das Niveau ist weit verstellt (" + signed(d.niveau) + " K). Üblich ist, mit Neigung und Tag-Knopf zu arbeiten und das Niveau nur zur Feinkorrektur zu nutzen.");
+    if (d.day.rt >= 23) add("info", "Tag-Knopf auf " + knobText("sonne", s.pos.sonne) + ", also etwa " + num(d.day.rt) + " °C Raum. Jedes Grad weniger spart etwa 6 % Heizenergie. Außerdem heizt die Anlage bis " + num(d.day.rt + 1) + " °C außen.");
+    else if (d.day.rt <= 17) add("info", "Tag-Knopf sehr niedrig, etwa " + num(d.day.rt) + " °C Raum. Sparsam, aber nur sinnvoll, wenn es dir warm genug ist.");
+    if (d.night.rt >= d.day.rt - 1) add("warn", "Keine echte Nachtabsenkung: Nacht etwa " + num(d.night.rt) + " °C, Tag etwa " + num(d.day.rt) + " °C. Üblich sind 3 bis 6 K weniger.");
+    else if (d.day.rt - d.night.rt > 8) add("info", "Sehr tiefe Nachtabsenkung, etwa " + num(d.night.rt) + " °C. Das spart, aber morgens dauert das Aufheizen länger.");
+    var order = { warn: 0, info: 1, ok: 2 };
+    out.sort(function (a, b) { return order[a.kind] - order[b.kind]; });
+    return out.slice(0, 5);
+  }
+
+  // Empfehlung aus der Rückmeldung (folgt der Korrekturtabelle der Original-Anleitung)
+  function recommend(s) {
+    var f = s.feel, M = f.mild, K = f.kalt === "?" ? null : f.kalt, N = f.nacht;
+    var r = { answered: !!(f.mild || f.kalt || f.nacht), title: null, kind: "change", stages: false, acts: [], notes: [], info: null };
+    function act(k, delta, why) { r.acts.push({ k: k, delta: delta, why: why }); }
+    if (M === "kalt" && K === "kalt") { r.title = "Überall zu kalt"; act("sonne", 1, "hebt die ganze Kurve an, an milden Tagen etwas stärker"); }
+    else if (M === "warm" && K === "warm") { r.title = "Überall zu warm"; act("sonne", -1, "senkt die ganze Kurve, an milden Tagen etwas stärker"); }
+    else if (M === "ok" && K === "kalt") { r.title = "Bei Frost zu kalt"; act("neigung", 1, "macht die Kurve steiler, wirkt vor allem bei Kälte"); }
+    else if (M === "ok" && K === "warm") { r.title = "Bei Frost zu warm"; act("neigung", -1, "macht die Kurve flacher, wirkt vor allem bei Kälte"); }
+    else if (M === "kalt" && K === "ok") { r.title = "An milden Tagen zu kalt"; r.stages = true; act("niveau", 1, "hebt die Kurve überall um 3 K"); act("neigung", -1, "nimmt bei Frost wieder etwas zurück"); }
+    else if (M === "warm" && K === "ok") { r.title = "An milden Tagen zu warm"; r.stages = true; act("niveau", -1, "senkt die Kurve überall um 3 K"); act("neigung", 1, "gibt bei Frost wieder etwas dazu"); }
+    else if (M === "kalt" && K === "warm") { r.title = "Kurve zu steil"; act("niveau", 1, "mehr Wärme an milden Tagen"); act("neigung", -1, "weniger Wärme bei Frost"); }
+    else if (M === "warm" && K === "kalt") { r.title = "Kurve zu flach"; act("neigung", 1, "mehr Wärme bei Frost"); act("niveau", -1, "weniger Wärme an milden Tagen"); }
+    else if (M === "ok" && K === "ok") { r.title = "Passt. Sparversuch?"; r.kind = "save"; act("niveau", -1, "die Kurve probeweise 3 K tiefer. Wird es zu kühl, einfach zurück"); }
+    else if (M === "kalt") { r.title = "An milden Tagen zu kalt"; act("sonne", 1, "der Tag-Knopf ist für die Wohlfühltemperatur gedacht. Die Neigung prüfst du, wenn es friert"); }
+    else if (M === "warm") { r.title = "An milden Tagen zu warm"; act("sonne", -1, "der Tag-Knopf ist für die Wohlfühltemperatur gedacht. Die Neigung prüfst du, wenn es friert"); }
+    else if (K === "kalt") { r.title = "Bei Frost zu kalt"; act("neigung", 1, "macht die Kurve steiler, wirkt vor allem bei Kälte"); }
+    else if (K === "warm") { r.title = "Bei Frost zu warm"; act("neigung", -1, "macht die Kurve flacher, wirkt vor allem bei Kälte"); }
+    else if (M === "ok") r.info = "An milden Tagen passt es. Die Neigung prüfst du, sobald es friert.";
+    else if (K === "ok") r.info = "Bei Frost passt es. Prüfe an einem milden Tag, ob es dann auch passt.";
+    if (N === "kalt") { act("mond", 1, "weniger Absenkung, die Räume kühlen nachts weniger aus"); if (!r.title) r.title = "Morgens zu kalt"; }
+    else if (N === "warm") { act("mond", -1, "stärkere Absenkung in der Nacht"); if (!r.title) r.title = "Nachts zu warm"; }
+
+    var pos = { sonne: s.pos.sonne, mond: s.pos.mond, neigung: s.pos.neigung, niveau: s.pos.niveau };
+    var FALLBACK = { neigung: "niveau", sonne: "niveau", niveau: "sonne" };
+    var used = {};
+    r.acts.forEach(function (a) { used[a.k] = true; });
+    r.acts = r.acts.filter(function (a) {
+      var np = clamp(pos[a.k] + a.delta, 0, 15);
+      if (np === pos[a.k]) {
+        var alt = FALLBACK[a.k];
+        var ap = alt ? clamp(pos[alt] + a.delta, 0, 15) : null;
+        if (alt && !used[alt] && ap !== pos[alt]) {
+          r.notes.push(KLABEL[a.k] + " steht schon am Anschlag. Darum stattdessen " + KLABEL[alt] + ", das hebt bzw. senkt die Kurve ebenfalls.");
+          used[alt] = true;
+          a.k = alt; a.why = a.delta > 0 ? "hebt die Kurve an" : "senkt die Kurve";
+          a.from = pos[alt]; a.to = ap; pos[alt] = ap; return true;
+        }
+        r.notes.push(KLABEL[a.k] + " steht schon am Anschlag. Weiter geht es hier nicht, frag im Zweifel den Fachbetrieb.");
+        return false;
+      }
+      a.from = pos[a.k]; a.to = np; pos[a.k] = np; return true;
+    });
+    r.pos = pos;
+    if (r.acts.length) {
+      var before = derivedPos(s.pos), after = derivedPos(pos);
+      r.before = before; r.after = after;
+      var na = normAt();
+      if (curve(na, after.day) > s.tmax && curve(na, before.day) <= s.tmax)
+        r.notes.push("Mit dem Vorschlag stößt die Kurve bei " + atText(crossAt(after.day, s.tmax)) + " an die " + num(s.tmax) + "-°C-Grenze.");
+    }
+    return r;
   }
 
   // ---------------------------------------------------------------- DOM-Helfer
@@ -282,7 +394,7 @@
     el("p", { class: "hk-hint" }, cKnobs,
       "Dreh die Knöpfe so, dass die dunkle Zeigermarke wie an deinem Gerät steht. Ziehen, tippen oder Pfeiltasten.");
     var kGrid = el("div", { class: "hk-knobs" }, cKnobs);
-    var knobs = ORDER.map(function (k) { return buildKnob(kGrid, k, s, update); });
+    var knobs = ORDER.map(function (k) { return buildKnob(kGrid, k, s, function () { s.applied = false; update(); }); });
     var kBtns = el("div", { class: "hk-row" }, cKnobs);
     var bReset = el("button", { type: "button", class: "hk-btn" }, kBtns, "Werkseinstellung");
 
@@ -338,9 +450,46 @@
     el("span", { class: "hk-unit" }, istRow, "°C");
     var istOut = el("span", { class: "hk-ist__out" }, istRow);
 
-    // Karte 3: Diagramm
+    // Karte 3: Empfehlung
+    var cRec = el("section", { class: "hk-card hk-card--rec" }, app);
+    el("h3", { class: "hk-card__title" }, cRec, "3 · Empfehlung");
+    var recGrid = el("div", { class: "hk-rec" }, cRec);
+    var recColA = el("div", { class: "hk-rec__col" }, recGrid);
+    el("h4", { class: "hk-rec__h" }, recColA, "Check deiner Einstellung");
+    var recChecks = el("ul", { class: "hk-rec__list" }, recColA);
+    el("p", { class: "hk-hint" }, recColA, "Verglichen mit üblichen Werten für eine Heizkörper-Anlage. Entscheidend ist, wie warm es bei dir wirklich wird.");
+    var recColB = el("div", { class: "hk-rec__col" }, recGrid);
+    el("h4", { class: "hk-rec__h" }, recColB, "Wie ist es bei dir?");
+    el("p", { class: "hk-hint" }, recColB, "Bewerte den Referenzraum bei offenem Thermostat, nachdem die Heizung einige Stunden lief.");
+    var QUESTIONS = [
+      ["mild", "An milden Tagen", "+5 bis +15 °C außen", [["kalt", "zu kalt"], ["ok", "passt"], ["warm", "zu warm"]]],
+      ["kalt", "An kalten Tagen", "unter 0 °C außen", [["kalt", "zu kalt"], ["ok", "passt"], ["warm", "zu warm"], ["?", "noch nicht erlebt"]]],
+      ["nacht", "Morgens nach der Nacht", "nach der Absenkung", [["kalt", "zu kalt"], ["ok", "passt"], ["warm", "nachts zu warm"]]]
+    ];
+    var qBtns = {};
+    QUESTIONS.forEach(function (q) {
+      var row = el("div", { class: "hk-q" }, recColB);
+      var lab = el("div", { class: "hk-q__label" }, row);
+      el("strong", {}, lab, q[1]);
+      el("span", {}, lab, q[2]);
+      var seg = el("div", { class: "hk-q__seg", role: "radiogroup", "aria-label": q[1] }, row);
+      qBtns[q[0]] = {};
+      q[3].forEach(function (o) {
+        var b = el("button", { type: "button", role: "radio", class: "hk-q__btn hk-q__btn--" + (o[0] === "?" ? "x" : o[0]) }, seg, o[1]);
+        b.addEventListener("click", function () {
+          s.feel[q[0]] = s.feel[q[0]] === o[0] ? null : o[0];
+          s.applied = false;
+          update();
+        });
+        qBtns[q[0]][o[0]] = b;
+      });
+    });
+    var recOut = el("div", { class: "hk-rec__out", "aria-live": "polite" }, cRec);
+    var sug = null;
+
+    // Karte 4: Diagramm
     var cChart = el("section", { class: "hk-card hk-card--chart" }, app);
-    el("h3", { class: "hk-card__title" }, cChart, "3 · Deine Heizkurve");
+    el("h3", { class: "hk-card__title" }, cChart, "4 · Deine Heizkurve");
     var legend = el("div", { class: "hk-legend" }, cChart);
     function legendItem(cls, label, checkKey) {
       var item = el(checkKey ? "label" : "span", { class: "hk-legend__item" }, legend);
@@ -357,6 +506,7 @@
     var lgNight = legendItem("hk-key--night", "Nacht", "showNight");
     var lgWerk = legendItem("hk-key--werk", "Werkseinstellung", "showWerk");
     var lgCmp = legendItem("hk-key--cmp", "Vergleich");
+    var lgSug = legendItem("hk-key--sug", "Vorschlag");
 
     var chartBox = el("div", { class: "hk-chart" }, cChart);
     var svg = sv("svg", { viewBox: "0 0 " + W + " " + H, class: "hk-svg", role: "img" }, chartBox);
@@ -368,9 +518,9 @@
       "Ins Diagramm tippen oder ziehen setzt die Außentemperatur. Der Kessel fährt die kräftige Linie; " +
       "die dünne gestrichelte zeigt die Kurve ohne Ober- und Untergrenze.");
 
-    // Karte 4: Tabelle
+    // Karte 5: Tabelle
     var cTab = el("section", { class: "hk-card hk-card--table" }, app);
-    el("h3", { class: "hk-card__title" }, cTab, "4 · Vorlauftemperaturen auf einen Blick");
+    el("h3", { class: "hk-card__title" }, cTab, "5 · Vorlauftemperaturen auf einen Blick");
     var tWrap = el("div", { class: "hk-tablewrap" }, cTab);
     var table = el("table", { class: "hk-table" }, tWrap);
     var tNote = el("p", { class: "hk-hint" }, cTab);
@@ -403,16 +553,18 @@
     atRange.addEventListener("input", function () { s.at = parseFloat(atRange.value); update(); });
     bReset.addEventListener("click", function () {
       s.pos = { sonne: 7, mond: 9, neigung: 8, niveau: 4 };
+      s.applied = false;
       knobs.forEach(function (k) { k.render(); });
       update();
     });
     bCmp.addEventListener("click", function () {
       var d = derived(s);
+      s.autoCmp = false;
       s.compare = { rt: d.day.rt, neigung: d.neigung, niveau: d.niveau,
         label: "Neigung " + num(d.neigung, 2) + " · Niveau " + signed(d.niveau) + " · ☀︎ " + (d.sonne === 0 ? "N" : "N " + signed(d.sonne)) };
       update();
     });
-    bCmpDel.addEventListener("click", function () { s.compare = null; update(); });
+    bCmpDel.addEventListener("click", function () { s.compare = null; s.autoCmp = false; update(); });
     istIn.addEventListener("input", function () {
       var v = parseFloat(istIn.value);
       s.ist = isNaN(v) ? null : v;
@@ -532,12 +684,21 @@
       }
       if (s.showNight || s.mode !== "tag") series(d.night, "hk-line--night", s.mode === "frost" ? 3 : d.night.rt + 1);
       series(d.day, "hk-line--day", d.day.rt + 1);
+      var ySug = null;
+      if (sug) {
+        sv("path", { d: pathOf(function (at) { return effCurve(s, sug.after.day, at); }), class: "hk-line hk-line--sug" }, gc);
+        if (sug.after.night.rt !== d.night.rt && (s.showNight || s.mode !== "tag"))
+          sv("path", { d: pathOf(function (at) { return effCurve(s, sug.after.night, at); }), class: "hk-line hk-line--sug hk-line--sug-night" }, gc);
+        ySug = Y(effCurve(s, sug.after.day, XMIN));
+      }
 
       // Endbeschriftungen rechts
       var yD = Y(effCurve(s, d.day, XMIN)), yN = Y(effCurve(s, d.night, XMIN));
       sv("text", { x: ML + PW + 8, y: yD + 4, class: "hk-endlabel" }, svg, "Tag");
       if ((s.showNight || s.mode !== "tag") && Math.abs(yD - yN) > 14)
         sv("text", { x: ML + PW + 8, y: yN + 4, class: "hk-endlabel" }, svg, "Nacht");
+      if (ySug != null && Math.abs(ySug - yD) > 14 && Math.abs(ySug - yN) > 14)
+        sv("text", { x: ML + PW + 8, y: ySug + 4, class: "hk-endlabel" }, svg, NARROW ? "Neu" : "Vorschlag");
 
       // Ausgewählter Punkt
       var ev = evaluate(s, d, s.at, s.mode);
@@ -584,6 +745,7 @@
       if (s.showNight || s.mode !== "tag") row("hk-key--night", "Nacht", d.night);
       if (s.showWerk) row("hk-key--werk", "Werk", WERK);
       if (s.compare) row("hk-key--cmp", "Vergleich", s.compare);
+      if (sug) row("hk-key--sug", "Vorschlag", sug.after.day);
       tip.hidden = false;
       var box = chartBox.getBoundingClientRect(), r = p.r;
       var left = (x / W) * r.width + (r.left - box.left);
@@ -613,12 +775,114 @@
       line("☽ Nacht", d.night);
       line("Werk (Tag)", WERK);
       if (s.compare) line("Vergleich", s.compare);
+      if (sug) line("Vorschlag (Tag)", sug.after.day);
       tNote.textContent = "Werte in °C, gerundet. „aus“ = Sommerabschaltung (Heizkreispumpe aus)." +
         (marks ? " * = Kessel an Unter- oder Obergrenze, die Kurve allein läge niedriger bzw. höher." : "");
     }
 
+    function renderRec(d) {
+      // Check
+      recChecks.textContent = "";
+      checks(s, d).forEach(function (c) {
+        var li = el("li", { class: "hk-rec__item is-" + c.kind }, recChecks);
+        el("span", { class: "hk-rec__icon", "aria-hidden": "true" }, li, c.kind === "ok" ? "✓" : c.kind === "warn" ? "!" : "i");
+        el("span", {}, li, c.text);
+      });
+      // Fragen
+      Object.keys(qBtns).forEach(function (q) {
+        Object.keys(qBtns[q]).forEach(function (o) { qBtns[q][o].setAttribute("aria-checked", String(s.feel[q] === o)); });
+      });
+      // Ergebnis
+      recOut.textContent = "";
+      var r = recommend(s);
+      sug = (!s.applied && r.acts.length) ? r : null;
+      if (s.applied) {
+        recOut.className = "hk-rec__out is-done";
+        el("strong", {}, recOut, "✓ Übernommen.");
+        el("p", {}, recOut, "Stell die Knöpfe am Kessel genauso ein wie oben. Dann ein bis zwei Tage beobachten und hier wieder bewerten. Die alte Kurve siehst du als Vergleich im Diagramm.");
+        if (s.undo) {
+          var bu = el("button", { type: "button", class: "hk-btn" }, recOut, "Rückgängig");
+          bu.addEventListener("click", undo);
+        }
+        return;
+      }
+      if (!r.answered) {
+        recOut.className = "hk-rec__out is-empty";
+        el("p", {}, recOut, "Beantworte eine oder mehrere Fragen. Dann bekommst du eine konkrete Empfehlung, welchen Knopf du um wie viel drehst.");
+        return;
+      }
+      if (!r.acts.length) {
+        recOut.className = "hk-rec__out is-empty";
+        el("p", {}, recOut, r.info || "Für diese Antworten gibt es keine Änderung.");
+        r.notes.forEach(function (n) { el("p", { class: "hk-rec__note" }, recOut, n); });
+        return;
+      }
+      recOut.className = "hk-rec__out" + (r.kind === "save" ? " is-save" : "");
+      el("h4", { class: "hk-rec__title" }, recOut, r.title);
+      var ol = el("ol", { class: "hk-rec__acts" }, recOut);
+      r.acts.forEach(function (a, i) {
+        var li = el("li", {}, ol);
+        var head = el("div", { class: "hk-rec__act" }, li);
+        el("span", { class: "hk-rec__sym", "aria-hidden": "true" }, head, KSYM[a.k]);
+        el("strong", {}, head, KLABEL[a.k] + ": ");
+        el("span", { class: "hk-rec__from" }, head, knobText(a.k, a.from));
+        el("span", { "aria-hidden": "true" }, head, " → ");
+        el("strong", { class: "hk-rec__to" }, head, knobText(a.k, a.to));
+        el("div", { class: "hk-rec__why" }, li,
+          (Math.abs(a.to - a.from) === 1 ? "Ein Strich " : num(Math.abs(a.to - a.from)) + " Striche ") +
+          (a.to > a.from ? "im Uhrzeigersinn (Richtung +)" : "gegen den Uhrzeigersinn (Richtung −)") + ". Das " + a.why + "." +
+          (r.stages && i === 1 ? " Diesen Schritt erst nach zwei, drei Tagen machen." : ""));
+      });
+      if (r.stages) el("p", { class: "hk-rec__note" }, recOut, "Die Original-Anleitung empfiehlt hier zwei Etappen: erst das Niveau, nach ein paar Tagen die Neigung.");
+      // Wirkung
+      var eff = el("div", { class: "hk-rec__eff" }, recOut);
+      function effRow(label, cb, ca, at) {
+        var vb = effCurve(s, cb, at), va = effCurve(s, ca, at);
+        var row = el("div", {}, eff);
+        el("span", {}, row, label + " bei " + atText(at) + ": ");
+        el("span", {}, row, vb == null ? "aus" : deg(vb));
+        el("span", { "aria-hidden": "true" }, row, " → ");
+        el("strong", {}, row, va == null ? "aus" : deg(va));
+      }
+      if (r.after.day.rt !== r.before.day.rt || r.after.neigung !== r.before.neigung || r.after.niveau !== r.before.niveau) {
+        effRow("Vorlauf", r.before.day, r.after.day, 10);
+        effRow("Vorlauf", r.before.day, r.after.day, -10);
+      }
+      if (r.after.night.rt !== r.before.night.rt) effRow("Nachts", r.before.night, r.after.night, 0);
+      r.notes.forEach(function (n) { el("p", { class: "hk-rec__note" }, recOut, n); });
+      var row = el("div", { class: "hk-row" }, recOut);
+      var ba = el("button", { type: "button", class: "hk-btn hk-btn--primary" }, row, "Vorschlag übernehmen");
+      ba.addEventListener("click", function () { apply(r); });
+      el("span", { class: "hk-hint" }, row, "Im Diagramm grün gestrichelt.");
+      var gen = el("p", { class: "hk-rec__note" }, recOut);
+      gen.appendChild(document.createTextNode("Am Kessel nur diese Änderung machen, dann 24 bis 48 Stunden warten und bei ähnlichem Wetter neu bewerten. Ist nur ein einzelner Raum zu kalt, liegt es meist nicht an der Kurve, sondern am "));
+      var a = el("a", { href: "../abgleich/" }, gen, "hydraulischen Abgleich");
+      gen.appendChild(document.createTextNode("."));
+    }
+    function apply(r) {
+      var d = derived(s);
+      s.undo = { sonne: s.pos.sonne, mond: s.pos.mond, neigung: s.pos.neigung, niveau: s.pos.niveau };
+      s.compare = { rt: d.day.rt, neigung: d.neigung, niveau: d.niveau,
+        label: "vorher (Neigung " + num(d.neigung, 2) + " · Niveau " + signed(d.niveau) + " · ☀︎ " + knobText("sonne", s.pos.sonne) + ")" };
+      s.autoCmp = true;
+      s.pos = r.pos;
+      s.feel = { mild: null, kalt: null, nacht: null };
+      s.applied = true;
+      knobs.forEach(function (k) { k.render(); });
+      update();
+    }
+    function undo() {
+      if (!s.undo) return;
+      s.pos = s.undo; s.undo = null;
+      if (s.autoCmp) { s.compare = null; s.autoCmp = false; }
+      s.applied = false;
+      knobs.forEach(function (k) { k.render(); });
+      update();
+    }
+
     function update() {
       var d = derived(s);
+      renderRec(d);
       atRange.value = String(s.at);
       atOut.textContent = (s.at > 0 ? "+" : "") + num(s.at) + " °C";
       Object.keys(modeBtns).forEach(function (k) { modeBtns[k].setAttribute("aria-checked", String(k === s.mode)); });
@@ -626,6 +890,7 @@
       lgWerk.cb.checked = s.showWerk;
       lgCmp.item.hidden = !s.compare;
       if (s.compare) lgCmp.text.textContent = "Vergleich: " + s.compare.label;
+      lgSug.item.hidden = !sug;
       bCmpDel.hidden = !s.compare;
       inMax.value = String(s.tmax);
       inMin.value = String(s.tmin);

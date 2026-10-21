@@ -2,6 +2,7 @@
 .hk {
   --hk-day: #eb6834;
   --hk-night: #2a78d6;
+  --hk-sug: #1baf7a;
   --hk-surface: var(--md-default-bg-color);
   --hk-card: var(--md-default-bg-color);
   --hk-ink: var(--md-default-fg-color);
@@ -16,6 +17,7 @@
 [data-md-color-scheme="slate"] .hk {
   --hk-day: #d95926;
   --hk-night: #3987e5;
+  --hk-sug: #199e70;
   --hk-wash: rgba(255, 255, 255, .045);
 }
 .hk-top {
@@ -198,3 +200,57 @@ label.hk-legend__item { cursor: pointer; }
 .hk-knob__where { margin-bottom: 2px; }
 .hk-card--result { display: flex; flex-direction: column; }
 .hk-card--result .hk-hero { flex: 1; }
+
+/* Empfehlung */
+.hk-rec { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px 20px; }
+@media (max-width: 760px) { .hk-rec { grid-template-columns: minmax(0, 1fr); } }
+.md-typeset .hk-rec__h { margin: 2px 0 6px; font-size: .72rem; font-weight: 700; color: var(--hk-ink); }
+.md-typeset ul.hk-rec__list { list-style: none; margin: 0; padding: 0; }
+.md-typeset ul.hk-rec__list li.hk-rec__item {
+  display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 6px; align-items: start;
+  margin: 0 0 7px; font-size: .66rem; line-height: 1.45;
+}
+.hk-rec__icon {
+  display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%;
+  font-size: .6rem; font-weight: 700; margin-top: 1px; border: 1.5px solid var(--hk-ink-3); color: var(--hk-ink-2);
+}
+.hk-rec__item.is-ok .hk-rec__icon { border-color: #0ca30c; color: #0ca30c; }
+.hk-rec__item.is-warn .hk-rec__icon { border-color: #c98500; color: #c98500; }
+.hk-q { margin: 0 0 9px; }
+.hk-q__label { display: flex; gap: 6px; align-items: baseline; flex-wrap: wrap; font-size: .66rem; margin-bottom: 3px; }
+.hk-q__label span { color: var(--hk-ink-2); font-size: .6rem; }
+.hk-q__seg { display: flex; flex-wrap: wrap; gap: 5px; }
+.hk-q__btn {
+  font: inherit; font-size: .64rem; cursor: pointer; padding: 4px 11px; border-radius: 999px;
+  border: 1px solid var(--hk-line); background: var(--hk-surface); color: var(--hk-ink);
+}
+.hk-q__btn:hover { border-color: var(--hk-ink-3); }
+.hk-q__btn:focus-visible { outline: 2px solid var(--md-accent-fg-color); outline-offset: 2px; }
+.hk-q__btn[aria-checked="true"] { font-weight: 700; border-color: var(--hk-ink); box-shadow: inset 0 0 0 1px var(--hk-ink); }
+.hk-q__btn--kalt[aria-checked="true"] { border-color: var(--hk-night); box-shadow: inset 0 0 0 1px var(--hk-night); }
+.hk-q__btn--warm[aria-checked="true"] { border-color: var(--hk-day); box-shadow: inset 0 0 0 1px var(--hk-day); }
+.hk-q__btn--ok[aria-checked="true"] { border-color: #0ca30c; box-shadow: inset 0 0 0 1px #0ca30c; }
+.hk-rec__out {
+  margin-top: 12px; padding: 12px 14px; border-radius: 8px;
+  border: 1px solid var(--hk-line); border-left: 4px solid var(--hk-sug); background: var(--hk-wash);
+  font-size: .68rem;
+}
+.hk-rec__out.is-empty { border-left-color: var(--hk-line); color: var(--hk-ink-2); }
+.hk-rec__out.is-done { border-left-color: #0ca30c; }
+.md-typeset .hk-rec__out p { margin: 4px 0; }
+.md-typeset .hk-rec__title { margin: 0 0 6px; font-size: .8rem; font-weight: 700; }
+.md-typeset ol.hk-rec__acts { margin: 0 0 6px 1.2em; padding: 0; }
+.md-typeset ol.hk-rec__acts li { margin: 0 0 6px; }
+.hk-rec__act { font-size: .74rem; }
+.hk-rec__sym { display: inline-block; min-width: 1.2em; }
+.hk-rec__from { color: var(--hk-ink-2); }
+.hk-rec__to { font-size: .8rem; }
+.hk-rec__why { color: var(--hk-ink-2); font-size: .64rem; line-height: 1.45; }
+.hk-rec__eff { display: grid; gap: 2px; margin: 6px 0; font-variant-numeric: tabular-nums; }
+.md-typeset .hk-rec__note { color: var(--hk-ink-2); font-size: .63rem; line-height: 1.45; }
+.hk-btn--primary { border-color: var(--hk-sug); font-weight: 700; }
+.hk-btn--primary:hover:not(:disabled) { border-color: var(--hk-sug); background: var(--hk-wash); }
+.hk-line--sug { stroke: var(--hk-sug); stroke-width: 2.5; stroke-dasharray: 8 5; }
+.hk-line--sug-night { stroke-width: 2; opacity: .8; }
+.hk-key--sug { border-top-style: dashed; border-color: var(--hk-sug); }
+@media print { .hk-q__seg, .hk-rec__out .hk-btn { display: none !important; } }

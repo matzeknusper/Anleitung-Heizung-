@@ -25,7 +25,9 @@ wie dein Regler. Darunter folgt die Anleitung Schritt für Schritt.
 
 Stell die vier Knöpfe so ein wie an deinem Kessel und wähle die Außentemperatur. Der
 Rechner zeigt dir, auf welche Temperatur der Kessel regelt, und markiert den Punkt auf
-deiner Kurve.
+deiner Kurve. Im Teil **Empfehlung** prüft er deine Einstellung gegen übliche Werte. Sagst
+du ihm, ob es bei dir zu warm oder zu kalt ist, schlägt er vor, welchen Knopf du um wie viele
+Striche drehst, und zeigt die neue Kurve im Diagramm.
 
 <div id="hk-rechner" class="hk-mount">
 <noscript>Der Rechner braucht JavaScript. Die Richtwerte stehen weiter unten in der Tabelle.</noscript>
@@ -168,6 +170,10 @@ weniger.
 ---
 
 ## Schritt für Schritt
+
+Der Rechner oben nimmt dir die Entscheidung ab: Bewerte im Teil **Empfehlung**, wie warm
+es bei dir an milden und an kalten Tagen ist, und er nennt dir den passenden Knopf. Die
+Schritte hier erklären, was dahintersteckt.
 
 Die Grundregeln für alle Schritte:
 
