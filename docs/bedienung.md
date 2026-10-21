@@ -66,8 +66,8 @@ Wo es kein passendes Zeichen gibt, wird der Bildausschnitt verwendet.
 | ☽      | Reduzierter Betrieb (Nacht)       | gewünschte Raumtemperatur bei Absenkung, 1 Teilstrich ≈ 1 °C     | `N` ≈ 14 °C |
 | <img class="sym" src="../bilder/symbole/hahn.png" alt="Wasserhahn" title="Trinkwassererwärmung (Warmwasser)" height="20">     | Trinkwasser                       | Warmwassertemperatur 32 – 60 °C, `0` = Warmwasser aus            | 50 °C      |
 | ⊏ | **Programmwahlschalter**        | Betriebsprogramm, siehe [Betriebsprogramm wählen (Programmwahlschalter)](bedienung.md#betriebsprogramm-wahlen-programmwahlschalter)                              | ☀︎/❄︎        |
-| ∡ (hinter der Klappe) | Neigung Heizkennlinie | 0,2 – 2,6, siehe [Heizkennlinie (Neigung und Niveau)](temperaturen.md#heizkennlinie-neigung-und-niveau)                                     | 1,2        |
-| ⫽ (hinter der Klappe) | Niveau Heizkennlinie  | −12 … +33, siehe [Heizkennlinie (Neigung und Niveau)](temperaturen.md#heizkennlinie-neigung-und-niveau)                                     | 0          |
+| ∡ (hinter der Klappe) | Neigung Heizkennlinie | 0,2 – 2,6, siehe [Heizkurve einstellen](heizkurve.md)                                     | 1,2        |
+| ⫽ (hinter der Klappe) | Niveau Heizkennlinie  | −12 … +33, siehe [Heizkurve einstellen](heizkurve.md)                                     | 0          |
 | <img class="sym" src="../bilder/symbole/temperaturregler.png" alt="Temperaturregler" title="Temperaturregler (maximale Kesselwassertemperatur)" height="20"> (hinter der Klappe) | Temperaturregler      | maximale Kesselwassertemperatur – **nicht verstellen**           | 75 °C      |
 | <img class="sym" src="../bilder/symbole/schornsteinfeger.png" alt="Schornsteinfeger" title="Schornsteinfeger-Prüfschalter" height="20"> | Schornsteinfeger-Prüfschalter | nur für die Abgasmessung, danach zurückstellen                   | –          |
 | ⏻ | Anlagenschalter `I` / `O` | Regelung ein / aus                                               | `I`        |

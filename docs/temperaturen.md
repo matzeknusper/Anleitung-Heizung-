@@ -13,7 +13,7 @@ Schritten verstellen und abwarten.
 - Jeder Teilstrich ≈ **1 °C**. Richtung `+` wärmer, Richtung `−` kälter.
 - Wenn die Räume **immer** zu kalt oder zu warm sind, egal wie das Wetter ist, ist
   der ☀︎-Knopf der richtige Hebel. Wenn es nur bei bestimmtem Wetter nicht passt,
-  siehe Heizkennlinie ([Heizkennlinie (Neigung und Niveau)](temperaturen.md#heizkennlinie-neigung-und-niveau)).
+  siehe Heizkennlinie ([Heizkurve einstellen](heizkurve.md)).
 
 ### Nachts / Absenkung (reduzierter Betrieb ☽)
 
@@ -46,30 +46,17 @@ drosseln statt die ganze Anlage kälter zu stellen.
 
 ## Heizkennlinie (Neigung und Niveau)
 
-Die Heizkennlinie bestimmt, wie heiß das Heizungswasser bei welcher Außentemperatur
-wird. Sie wird bei der Inbetriebnahme vom Fachbetrieb eingestellt und muss danach
-normalerweise nicht mehr verändert werden. Die Knöpfe sitzen hinter der Abdeckklappe.
+Die Heizkennlinie, auch Heizkurve genannt, bestimmt, wie heiß das Heizungswasser bei
+welcher Außentemperatur wird. Eingestellt wird sie mit zwei Knöpfen hinter der
+Abdeckklappe.
 
 | Knopf   | Bereich     | Werk | Wirkung                                                                 |
 |---------|-------------|------|-------------------------------------------------------------------------|
 | Neigung | 0,2 – 2,6   | 1,2  | Wie **steil** die Kurve ist: wie stark das Wasser bei Kälte heißer wird |
-| Niveau  | −12 … +33   | 0    | Verschiebt die ganze Kurve **parallel** nach oben / unten (in °C)       |
+| Niveau  | −12 … +33   | 0    | Verschiebt die ganze Kurve **parallel** nach oben / unten (in K)        |
 
-Richtwerte für die Neigung: gut gedämmtes Haus in geschützter Lage ≈ 1,0, freie Lage
-oder ältere Anlage mit Heizkörpern ≈ 1,2. Niedertemperaturheizungen liegen im Bereich
-0,8 – 1,4. Fußbodenheizung 0,2 – 0,8.
+!!! tip "Ausführliche Anleitung mit Rechner"
 
-### Wann was verstellen
-
-| Problem                                                              | Abhilfe                                                               |
-|----------------------------------------------------------------------|-----------------------------------------------------------------------|
-| Im **tiefen Winter** zu kalt, in der Übergangszeit in Ordnung         | **Neigung** einen Schritt **höher**                                   |
-| Im **tiefen Winter** zu warm, in der Übergangszeit in Ordnung         | **Neigung** einen Schritt **niedriger**                               |
-| In der **Übergangszeit** zu kalt, im tiefen Winter in Ordnung         | **Niveau** etwas **höher**, dann **Neigung** einen Schritt niedriger  |
-| In der **Übergangszeit** zu warm, im tiefen Winter in Ordnung         | **Niveau** etwas **niedriger**, dann **Neigung** einen Schritt höher  |
-| **Immer** zu kalt / zu warm, bei jedem Wetter                         | nicht die Kennlinie, sondern den **☀︎-Knopf** verstellen ([Raumtemperatur einstellen](temperaturen.md#raumtemperatur-einstellen)) |
-
-Immer nur einen Schritt ändern und ein bis zwei Tage beobachten.
-
-**Obergrenze:** Die Kesselwassertemperatur ist auf 75 °C begrenzt (Temperaturregler
-hinter der Klappe und elektronische Begrenzung). Diese Einstellung nicht verändern.
+    Wie du die Heizkurve Schritt für Schritt selbst einstellst, mit einem Rechner, der
+    genau wie deine Trimatik rechnet, steht auf der Seite
+    **[Heizkurve einstellen](heizkurve.md)**.

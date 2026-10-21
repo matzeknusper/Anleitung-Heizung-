@@ -57,6 +57,6 @@ den Begrenzern hinter der Klappe verändern.
 - **Stoßlüften** mit ganz geöffnetem Fenster, dabei Thermostate zudrehen.
   Keine Dauerkippstellung.
 - **Heizkörper freihalten**, Rollläden bei Dunkelheit schließen.
-- **Heizkennlinie so flach wie möglich** ([Heizkennlinie (Neigung und Niveau)](temperaturen.md#heizkennlinie-neigung-und-niveau)). Jede Senkung der Vorlauf-
+- **Heizkennlinie so flach wie möglich** ([Heizkurve einstellen](heizkurve.md)). Jede Senkung der Vorlauf-
   temperatur spart Brennstoff, solange es noch warm genug wird.
 - **Jährliche Wartung** durch den Fachbetrieb (Brennereinstellung, Reinigung).

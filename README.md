@@ -379,6 +379,9 @@ drosseln statt die ganze Anlage kälter zu stellen.
 
 ## 9. Heizkennlinie (Neigung und Niveau)
 
+> 📈 **Ausführliche Anleitung zur Heizkurve mit interaktivem Rechner:**
+> <https://matzeknusper.github.io/Anleitung-Heizung-/heizkurve/>
+
 Die Heizkennlinie bestimmt, wie heiß das Heizungswasser bei welcher Außentemperatur
 wird. Sie wird bei der Inbetriebnahme vom Fachbetrieb eingestellt und muss danach
 normalerweise nicht mehr verändert werden. Die Knöpfe sitzen hinter der Abdeckklappe.

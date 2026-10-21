@@ -46,7 +46,7 @@ Hintergründe. Die vollständige Original-Anleitung liegt unter
 
 **Was die Regelung macht:** Sie misst die **Außentemperatur** (Sensor an der Hauswand)
 und stellt danach die **Kesselwassertemperatur** ein: je kälter draußen, desto heißer
-das Heizungswasser. Den Zusammenhang legt die **Heizkennlinie** fest ([Heizkennlinie (Neigung und Niveau)](temperaturen.md#heizkennlinie-neigung-und-niveau)).
+das Heizungswasser. Den Zusammenhang legt die **Heizkennlinie** fest ([Heizkurve einstellen](heizkurve.md)).
 Es gibt **keinen Raumfühler**. Die Drehknöpfe ☀︎ und ☽ verschieben nur die Kennlinie,
 die tatsächliche Raumtemperatur ergibt sich aus Kennlinie, Außentemperatur und den
 Thermostatventilen an den Heizkörpern.

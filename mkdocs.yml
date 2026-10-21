@@ -45,6 +45,8 @@ nav:
   - Bedienung: bedienung.md
   - Uhr & Heizzeiten: heizzeiten.md
   - Temperaturen: temperaturen.md
+  - Optimieren:
+      - Heizkurve einstellen: heizkurve.md
   - Urlaub, Störungen, Sparen: betrieb.md
   - Notizen: notizen.md
 
@@ -72,3 +74,7 @@ plugins:
 
 extra_css:
   - stylesheets/extra.css
+  - stylesheets/heizkurve.css
+
+extra_javascript:
+  - javascripts/heizkurve.js
