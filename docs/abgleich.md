@@ -11,6 +11,11 @@ ein Heizkreis **ohne Mischer**, Heizkörper, Warmwasserspeicher mit eigener Lade
     du jeden Heizkörper so, dass er genau die Wassermenge bekommt, die sein Raum braucht.
     Dafür stellst du an jedem Ventil einen festen Wert ein, die **Voreinstellung**.
 
+!!! tip "Die richtige Reihenfolge"
+
+    **1. [Entlüften](entlueften.md)** → **2. Hydraulischer Abgleich** →
+    **3. [Heizkurve einstellen](heizkurve.md)**. Jeder Schritt baut auf dem vorherigen auf.
+
 ---
 
 ## Brauche ich einen Abgleich?
@@ -57,7 +62,7 @@ Heizkörper solche haben, siehst du in fünf Minuten.
 | **Ring mit Zahlen 1 bis 6 oder 1 bis 8 und „N“**, z. B. Heimeier V-exact, Oventrop AV 9 | Voreinstellbar. Eingestellt wird meist mit einem kleinen Schlüssel des Herstellers. |
 | **Ring mit Zahlen 1 bis 7 und „N“**, oft rot oder grau, z. B. Danfoss RA-N | Voreinstellbar. Bei Danfoss geht das meist von Hand: Ring anheben und drehen. |
 | **Keine Zahlen am Oberteil** | Nicht voreinstellbar. Dann bleibt die Rücklaufverschraubung (siehe unten) oder ein Tausch der Ventil-Einsätze durch den Fachbetrieb. |
-| **Am anderen Ende unten eine Verschraubung mit Kappe**, darunter ein Innensechskant | Rücklaufverschraubung. Damit lässt sich drosseln, auch wenn das Thermostatventil nicht voreinstellbar ist. |
+| **Unten am Heizkörper eine Verschraubung mit Kappe**, meist unter dem Thermostatventil, manchmal auf der Gegenseite; darunter ein Innensechskant | Rücklaufverschraubung. Damit lässt sich drosseln, auch wenn das Thermostatventil nicht voreinstellbar ist. |
 
 Die Zahlen 1 bis 5 auf dem **Thermostatkopf** sind nicht die Voreinstellung. Sie geben nur
 die gewünschte Raumtemperatur an.
@@ -82,7 +87,7 @@ die gewünschte Raumtemperatur an.
 
 ### Schritt 1 · Vorbereitung
 
-- **Heizkörper entlüften und Anlagendruck prüfen.** Luft verfälscht alles.
+- **[Heizkörper entlüften](entlueften.md) und Anlagendruck prüfen.** Luft verfälscht alles.
 - **Heizkörper freiräumen**, keine Möbel oder dicken Vorhänge davor.
 - **Ausgangslage notieren:** Pumpenstufe, Heizkurve, Stellung jedes Ventils.
 
@@ -224,7 +229,7 @@ um 45 °C Rücklauf.
 | Rücklauf **fast so heiß wie der Vorlauf** (weniger als 8 K Unterschied) | zu viel Wasser | eine Stufe weniger |
 | Rücklauf **deutlich kälter** (mehr als 22 K) und der Raum wird **nicht warm** | zu wenig Wasser | eine Stufe mehr |
 | Rücklauf deutlich kälter, aber der Raum wird **warm genug** | großer Heizkörper, passt | nichts |
-| Ventil schon ganz offen, Rücklauf kalt, Raum kalt | Heizkörper zu klein, verschlammt oder Luft | entlüften, sonst Fachbetrieb |
+| Ventil schon ganz offen, Rücklauf kalt, Raum kalt | Heizkörper zu klein, verschlammt oder Luft | [entlüften](entlueften.md), sonst Fachbetrieb |
 
 Nach jeder Runde ein bis zwei Stunden warten und erneut messen. Meist reichen zwei
 Durchgänge. Danach Programmwahlschalter, Warmwasser-Knopf und Thermostatköpfe wieder wie
@@ -234,7 +239,8 @@ vorher einstellen.
 
 ## Ohne voreinstellbare Ventile: über die Rücklaufverschraubung
 
-Viele ältere Heizkörper haben unten am anderen Ende eine Rücklaufverschraubung. Damit kann
+Viele ältere Heizkörper haben unten eine Rücklaufverschraubung, meist unter dem
+Thermostatventil, manchmal auf der Gegenseite. Damit kann
 man auch ohne neue Ventile drosseln.
 
 1. **Kappe abschrauben.** Darunter sitzt ein Innensechskant.

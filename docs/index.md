@@ -18,6 +18,12 @@ Hintergründe. Die vollständige Original-Anleitung liegt unter
     Funktion schließe, ist das als *(vermutlich)* markiert – bitte einmal am Gerät prüfen.
 
 
+!!! tip "Optimieren: drei Anleitungen mit Rechnern"
+
+    1. **[Heizkörper entlüften](entlueften.md)**
+    2. **[Hydraulischer Abgleich](abgleich.md)** mit Abgleich-Rechner
+    3. **[Heizkurve einstellen](heizkurve.md)** mit Heizkurven-Rechner für deine Trimatik
+
 ## Das Wichtigste in 30 Sekunden
 
 | Ich will …                                   | Dann …                                                                                   |

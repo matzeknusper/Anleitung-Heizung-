@@ -37,3 +37,21 @@
 [data-md-color-scheme="slate"] .md-typeset img[src$="programmwahlschalter.png"] {
   filter: brightness(0.9);
 }
+
+/* Skizze Heizkörper (Entlüften) */
+.md-typeset .hz-fig { margin: 1em 0; width: 100%; }
+.hz-svg { width: 100%; max-width: 760px; height: auto; display: block; margin: 0 auto; }
+.hz-body { fill: var(--md-default-fg-color--lightest); stroke: var(--md-default-fg-color); stroke-width: 2; }
+.hz-ribs line { stroke: var(--md-default-fg-color--lighter); stroke-width: 1.5; }
+.hz-air circle { fill: var(--md-default-bg-color); stroke: var(--md-default-fg-color--light); stroke-width: 1.5; }
+.hz-pipe { fill: none; stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+.hz-pipe--vl { stroke: #eb6834; }
+.hz-pipe--rl { stroke: #2a78d6; }
+[data-md-color-scheme="slate"] .hz-pipe--vl { stroke: #d95926; }
+[data-md-color-scheme="slate"] .hz-pipe--rl { stroke: #3987e5; }
+.hz-part, .hz-head { fill: var(--md-default-bg-color); stroke: var(--md-default-fg-color); stroke-width: 2; }
+.hz-key { fill: var(--md-accent-fg-color); }
+.hz-label { fill: var(--md-default-fg-color); font-size: 14px; font-weight: 700; font-family: var(--md-text-font-family); }
+.hz-sub { fill: var(--md-default-fg-color--light); font-size: 12px; font-family: var(--md-text-font-family); }
+.hz-lead { stroke: var(--md-default-fg-color--light); stroke-width: 1; }
+.hz-fig figcaption { color: var(--md-default-fg-color--light); font-size: .68rem; text-align: center; }

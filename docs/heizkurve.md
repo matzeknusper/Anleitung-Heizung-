@@ -14,6 +14,11 @@ wie dein Regler. Darunter folgt die Anleitung Schritt für Schritt.
 
     In der Original-Anleitung heißt die Heizkurve **Heizkennlinie**. Gemeint ist dasselbe.
 
+!!! tip "Die richtige Reihenfolge"
+
+    **1. [Entlüften](entlueften.md)** → **2. [Hydraulischer Abgleich](abgleich.md)** →
+    **3. Heizkurve einstellen**. Jeder Schritt baut auf dem vorherigen auf.
+
 ---
 
 ## Heizkurven-Rechner
@@ -138,8 +143,8 @@ weniger.
 
 1. **Ausgangslage festhalten.** Fotografiere die Knöpfe, auch die hinter der Klappe, und
    trag die Werte auf der Seite [Notizen](notizen.md) ein. So kommst du jederzeit zurück.
-2. **Heizkörper entlüften und Anlagendruck prüfen.** Luft im Heizkörper sieht aus wie
-   eine zu niedrige Heizkurve.
+2. **[Heizkörper entlüften](entlueften.md) und Anlagendruck prüfen.** Luft im Heizkörper
+   sieht aus wie eine zu niedrige Heizkurve.
 3. **Werden alle Heizkörper gleichmäßig warm?** Wenn einzelne Räume immer kalt bleiben,
    während andere überheizen, fehlt der [hydraulische Abgleich](abgleich.md). Das löst keine
    Heizkurve.

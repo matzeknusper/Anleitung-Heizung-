@@ -8,6 +8,11 @@ Hintergründe. Die vollständige Original-Anleitung liegt unter
 
 > 🌐 **Als Website lesen:** <https://matzeknusper.github.io/Anleitung-Heizung-/>
 > (GitHub Pages, gebaut mit Material for MkDocs aus dem Ordner `docs/`).
+>
+> Dort gibt es außerdem drei ausführliche Anleitungen zum Optimieren:
+> [Heizkörper entlüften](https://matzeknusper.github.io/Anleitung-Heizung-/entlueften/) ·
+> [Hydraulischer Abgleich mit Rechner](https://matzeknusper.github.io/Anleitung-Heizung-/abgleich/) ·
+> [Heizkurve einstellen mit Rechner](https://matzeknusper.github.io/Anleitung-Heizung-/heizkurve/)
 
 > **Hinweis zur Quelle:** Die Original-Anleitung beschreibt die **Trimatik-MC**.
 > Das eingebaute Gerät ist die etwas ältere **Trimatik** (Tasten `CL`, `UHR`, `WT`,
