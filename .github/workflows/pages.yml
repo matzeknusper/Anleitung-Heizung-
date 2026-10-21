@@ -18,18 +18,18 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: GitHub Pages aktivieren (falls noch nicht geschehen)
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
         with:
           enablement: true
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
           cache: pip
       - run: pip install -r requirements.txt
       - run: mkdocs build --strict
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: site
 
@@ -39,6 +39,38 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    outputs:
+      page_url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
+
+  # Ruft nach jeder Veröffentlichung alle Seiten live ab und schlägt fehl,
+  # wenn eine Seite oder ein Rechner-Skript nicht erreichbar ist.
+  check:
+    needs: deploy
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Live-Seiten prüfen
+        env:
+          BASE: ${{ needs.deploy.outputs.page_url }}
+        run: |
+          set -u
+          echo "Basis-Adresse: $BASE"
+          sleep 15
+          fail=0
+          for p in "" bedienung/ heizzeiten/ temperaturen/ entlueften/ abgleich/ heizkurve/ betrieb/ notizen/ \
+                   javascripts/heizkurve.js javascripts/abgleich.js stylesheets/heizkurve.css stylesheets/abgleich.css \
+                   bilder/heizkennlinien_abb17.png; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --retry 5 --retry-delay 10 --retry-all-errors "${BASE}${p}")
+            echo "$code  ${BASE}${p}"
+            [ "$code" = "200" ] || fail=1
+          done
+          if curl -s "${BASE}heizkurve/" | grep -q 'id="hk-rechner"'; then echo "OK   Rechner-Platzhalter auf der Heizkurven-Seite"; else echo "FEHLT Rechner-Platzhalter"; fail=1; fi
+          if curl -s "${BASE}javascripts/heizkurve.js" | grep -q 'function recommend'; then echo "OK   Rechner-Skript mit Empfehlungen"; else echo "FEHLT Rechner-Skript"; fail=1; fi
+          echo "--- Zur Info: andere Schreibweisen der Adresse"
+          for u in "${BASE}heizkurve" "$(echo "$BASE" | tr 'A-Z' 'a-z')heizkurve/"; do
+            echo "$(curl -s -o /dev/null -w '%{http_code} -> %{redirect_url}' "$u")  $u"
+          done
+          exit $fail
