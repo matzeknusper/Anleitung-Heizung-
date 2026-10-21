@@ -263,3 +263,13 @@ label.hk-legend__item { cursor: pointer; }
 .md-typeset ul.hk-rec__todo { margin: 6px 0 6px 0; padding: 0; list-style: none; }
 .md-typeset ul.hk-rec__todo li { margin: 0 0 4px; font-size: .74rem; }
 .hk-rec__strokes { color: var(--hk-ink-2); font-size: .64rem; }
+
+/* Wirkung eines Strichs unter jedem Knopf */
+.hk-knob__eff {
+  margin: 5px auto 0; padding: 3px 7px; border-radius: 6px; max-width: 15em;
+  font-size: .6rem; line-height: 1.35; min-height: 2.7em;
+  display: flex; align-items: center; justify-content: center;
+}
+.hk-knob__eff.is-on { background: var(--hk-surface); color: var(--hk-ink); font-weight: 600; }
+.hk-knob__eff.is-other { background: var(--hk-surface); color: var(--hk-ink-2); }
+.hk-knob__eff.is-none { color: var(--hk-ink-3); font-style: italic; }

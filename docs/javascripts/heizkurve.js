@@ -351,6 +351,7 @@
     var out = el("output", { class: "hk-knob__value" }, ctrl);
     var plus = el("button", { type: "button", class: "hk-btn hk-btn--icon", "aria-label": K.aria + " einen Strich mehr" }, ctrl, "+");
     var sub = el("div", { class: "hk-knob__sub" }, box);
+    var eff = el("div", { class: "hk-knob__eff", "aria-live": "polite" }, box);
 
     function text(p) {
       var v = knobValue(key, p);
@@ -403,7 +404,7 @@
     minus.addEventListener("click", function () { set(Math.ceil(s.pos[key]) - 1); });
     plus.addEventListener("click", function () { set(Math.floor(s.pos[key]) + 1); });
     render();
-    return { render: render };
+    return { render: render, eff: eff, key: key };
   }
 
   // ---------------------------------------------------------------- Diagramm
@@ -447,7 +448,8 @@
     var cKnobs = el("section", { class: "hk-card hk-card--knobs" }, app);
     el("h3", { class: "hk-card__title" }, cKnobs, "1 · So ist dein Kessel eingestellt");
     el("p", { class: "hk-hint" }, cKnobs,
-      "Dreh die Knöpfe so, dass die dunkle Zeigermarke wie an deinem Gerät steht. Ziehen, tippen oder Pfeiltasten.");
+      "Dreh die Knöpfe so, dass die dunkle Zeigermarke wie an deinem Gerät steht. Ziehen, tippen oder Pfeiltasten. " +
+      "Unter jedem Knopf steht, was ein Strich gerade bewirkt. Bei milden Temperaturen hält der Kessel nachts oft nur seine Untergrenze, dann ändern Nacht-Knopf, Neigung und Niveau im Nachtbetrieb nichts.");
     var kGrid = el("div", { class: "hk-knobs" }, cKnobs);
     var knobs = ORDER.map(function (k) { return buildKnob(kGrid, k, s, function () { s.applied = false; update(); }); });
     var kBtns = el("div", { class: "hk-row" }, cKnobs);
@@ -1024,9 +1026,36 @@
       update();
     }
 
+    // Was bewirkt ein Strich an diesem Knopf gerade, oder warum nichts?
+    function knobEffect(k) {
+      var d = derived(s), ev = evaluate(s, d, s.at, s.mode);
+      if (k === "sonne" && s.mode !== "tag") return { cls: "is-none", text: "Wirkt nur im Tagbetrieb ☀︎" };
+      var mode = s.mode, prefix = "";
+      if (k === "mond" && s.mode === "tag") { mode = "nacht"; prefix = "Nachts: "; ev = evaluate(s, d, s.at, "nacht"); }
+      if (!ev.pump) return { cls: "is-none", text: prefix + "gerade ohne Wirkung, Heizung aus" + (mode === "frost" ? " (über +3 °C)" : "") };
+      function at(p) { var pos = copyPos(s.pos); pos[k] = clamp(p, 0, 15); return evaluate(s, derivedPos(pos), s.at, mode); }
+      var up = at(s.pos[k] + 1), dn = at(s.pos[k] - 1);
+      var dUp = up.temp != null && s.pos[k] < 15 ? up.temp - ev.temp : 0;
+      var dDn = dn.temp != null && s.pos[k] > 0 ? ev.temp - dn.temp : 0;
+      if (Math.abs(dUp) < 0.05 && Math.abs(dDn) < 0.05) {
+        if (ev.low) return { cls: "is-none", text: prefix + "gerade ohne Wirkung: Kessel hält die Untergrenze " + num(s.tmin) + " °C" };
+        if (ev.high) return { cls: "is-none", text: prefix + "gerade ohne Wirkung: Kessel an der Obergrenze " + num(s.tmax) + " °C" };
+        return { cls: "is-none", text: prefix + "gerade ohne Wirkung" };
+      }
+      var v = Math.abs(dUp) >= 0.05 ? dUp : dDn;
+      var side = Math.abs(dUp) < 0.05 ? " (nur nach unten)" : Math.abs(dDn) < 0.05 ? " (nur nach oben)" : "";
+      return { cls: k === "mond" && s.mode === "tag" ? "is-other" : "is-on",
+        text: prefix + "1 Strich ≈ " + num(Math.abs(v), 1) + " K Vorlauf" + side };
+    }
+
     function update() {
       var d = derived(s);
       renderRec(d);
+      knobs.forEach(function (w) {
+        var e = knobEffect(w.key);
+        w.eff.textContent = e.text;
+        w.eff.className = "hk-knob__eff " + e.cls;
+      });
       atRange.value = String(s.at);
       atOut.textContent = (s.at > 0 ? "+" : "") + num(s.at) + " °C";
       Object.keys(modeBtns).forEach(function (k) { modeBtns[k].setAttribute("aria-checked", String(k === s.mode)); });
