@@ -46,6 +46,7 @@ nav:
   - Uhr & Heizzeiten: heizzeiten.md
   - Temperaturen: temperaturen.md
   - Optimieren:
+      - Hydraulischer Abgleich: abgleich.md
       - Heizkurve einstellen: heizkurve.md
   - Urlaub, Störungen, Sparen: betrieb.md
   - Notizen: notizen.md
@@ -75,6 +76,8 @@ plugins:
 extra_css:
   - stylesheets/extra.css
   - stylesheets/heizkurve.css
+  - stylesheets/abgleich.css
 
 extra_javascript:
   - javascripts/heizkurve.js
+  - javascripts/abgleich.js

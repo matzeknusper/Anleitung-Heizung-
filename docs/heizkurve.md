@@ -141,7 +141,8 @@ weniger.
 2. **Heizkörper entlüften und Anlagendruck prüfen.** Luft im Heizkörper sieht aus wie
    eine zu niedrige Heizkurve.
 3. **Werden alle Heizkörper gleichmäßig warm?** Wenn einzelne Räume immer kalt bleiben,
-   während andere überheizen, fehlt der hydraulische Abgleich. Das löst keine Heizkurve.
+   während andere überheizen, fehlt der [hydraulische Abgleich](abgleich.md). Das löst keine
+   Heizkurve.
 4. **Referenzraum wählen.** Am besten der Raum, in dem du es am wärmsten haben willst,
    oder der Raum, der am schwersten warm wird. Meist ist das das Wohnzimmer.
 5. **Thermometer aufstellen.** Im Referenzraum auf etwa 1 m Höhe, an einer Innenwand,
@@ -232,7 +233,7 @@ Tag:
 - **Thermostate überall stark gedrosselt, Heizkörper nur oben warm:** Die Kurve ist höher
   als nötig. Einen Strich tiefer probieren.
 - **Ein Raum wird selbst auf Stufe 5 nicht warm, die anderen schon:** Das ist ein Fall für
-  den hydraulischen Abgleich oder einen zu kleinen Heizkörper, nicht für die Kurve.
+  den [hydraulischen Abgleich](abgleich.md) oder einen zu kleinen Heizkörper, nicht für die Kurve.
 
 Danach stellst du das Thermostat im Referenzraum wieder auf die gewohnte Stufe.
 
@@ -243,7 +244,7 @@ Danach stellst du das Thermostat im Referenzraum wieder auf die gewohnte Stufe.
 - **Mehrere Knöpfe gleichzeitig verstellen.** Dann weiß niemand mehr, was gewirkt hat.
 - **Zu früh bewerten.** Unter 24 Stunden ist das Ergebnis Zufall.
 - **Einen kalten Raum mit der Kurve retten.** Dann überheizen alle anderen Räume, und ihre
-  Thermostate müssen dagegen ankämpfen. Erst entlüften und abgleichen.
+  Thermostate müssen dagegen ankämpfen. Erst entlüften und [abgleichen](abgleich.md).
 - **Kurve hoch, Thermostate runter.** Die Thermostate regeln dann dauernd ab, der Kessel
   läuft heißer als nötig, die Verluste steigen.
 - **Den Temperaturregler (75 °C) oder die Entsperrung hinter der Klappe verstellen.** Das
